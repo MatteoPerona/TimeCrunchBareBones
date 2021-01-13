@@ -19,6 +19,8 @@ public class CrunchLogic : MonoBehaviour
     public Button doneBtn;
     public float time = 0.0f;
     public bool adderClicked;
+    public GameObject completedQuestion;
+    public float crunchTime = 0.25f;
 
     void Start()
     {
@@ -47,6 +49,10 @@ public class CrunchLogic : MonoBehaviour
         doneBtn.onClick.AddListener(delegate{
             task.timeEstimate = time/86400;
             FindObjectOfType<TodayLogic>().updateScroll();
+        });
+
+        crunchButton.onClick.AddListener(delegate{
+            StartCoroutine(crunch(crunchTime));
         });
     }
 
@@ -97,7 +103,6 @@ public class CrunchLogic : MonoBehaviour
         float tHold = 0.5f;
         while (adderClicked)
         {
-            Debug.Log(adderClicked);
             if (t >= tHold)
             {
                 t = 0.0f;
@@ -108,5 +113,41 @@ public class CrunchLogic : MonoBehaviour
             yield return null;
             t += Time.deltaTime;
         }
+    }
+
+    public IEnumerator crunch(float duration, bool reverse = false, RectTransform rect = null)
+    {
+        Vector3 startPos = new Vector3(0, 2446, 0);
+        Vector3 endPos = transform.localPosition;
+        float exponent = 0.35f;
+        if (reverse)
+        {
+            endPos = new Vector3(0, 2446, 0);
+            startPos = transform.localPosition;
+            exponent = 1/exponent;
+        }
+        else
+        {
+            GameObject newCompletedQuestion = Instantiate(completedQuestion, startPos, Quaternion.identity);
+            newCompletedQuestion.transform.SetParent(transform);
+            rect = newCompletedQuestion.GetComponent<RectTransform>();
+        }
+        float t = 0.0f;
+        while (t < duration)
+        {
+            rect.localPosition = Vector3.Lerp(startPos, endPos, Mathf.Pow(t/duration, exponent));
+            yield return null;
+            t += Time.deltaTime;
+        }
+        rect.localPosition = endPos;
+        if (reverse)
+        {
+            Destroy(rect.gameObject);
+        }
+    }
+
+    public void destroyMe()
+    {
+        Destroy(gameObject);
     }
 }

@@ -681,6 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e27a1ec3705d374d89cbe01865af797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  crunchButton: {fileID: 3133520564885120090}
   timer: {fileID: 5388621840470360591}
   pausePlay: {fileID: 60738533608152532}
   addTimeBtn: {fileID: 9103615485766077341}
@@ -691,6 +692,8 @@ MonoBehaviour:
   doneBtn: {fileID: 1605397113954651091}
   time: 0
   adderClicked: 0
+  completedQuestion: {fileID: 2481327953168186364, guid: 1cca53f479a18f541bb443d9d45e5fce, type: 3}
+  crunchTime: 0.25
 --- !u!1 &2253343857589206101
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,7 +976,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1036.1, y: 153.26166}
+  m_SizeDelta: {x: 1036.1, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3545620805503820924
 MonoBehaviour:
@@ -1303,7 +1306,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 6
+  m_PixelsPerUnitMultiplier: 4
 --- !u!114 &3133520564885120090
 MonoBehaviour:
   m_ObjectHideFlags: 0

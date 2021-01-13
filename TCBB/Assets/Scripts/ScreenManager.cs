@@ -15,14 +15,14 @@ public class ScreenManager : MonoBehaviour, IDragHandler, IEndDragHandler{
         panelLocation = transform.position;
     }
     public void OnDrag(PointerEventData data){
-        if (FindObjectOfType<ProjectPanelLogic>() == null){
+        if (isMobile()){
         FindObjectOfType<TodayLogic>().updateScroll();
         float difference = data.pressPosition.x - data.position.x;
         transform.position = panelLocation - new Vector3(difference, 0, 0);
         }
     }
     public void OnEndDrag(PointerEventData data){
-        if (FindObjectOfType<ProjectPanelLogic>() == null){
+        if (isMobile()){
         float percentage = (data.pressPosition.x - data.position.x) / Screen.width;
         if(Mathf.Abs(percentage) >= percentThreshold){
             Vector3 newLocation = panelLocation;
@@ -49,5 +49,14 @@ public class ScreenManager : MonoBehaviour, IDragHandler, IEndDragHandler{
             transform.position = Vector3.Lerp(startpos, endpos, Mathf.SmoothStep(0f, 1f, t));
             yield return null;
         }
+    }
+
+    private bool isMobile()
+    {
+        if (FindObjectOfType<ProjectPanelLogic>() == null && FindObjectOfType<CrunchLogic>() == null)
+        {
+            return true;
+        }
+        return false;
     }
 }

@@ -12,7 +12,7 @@ public class TodayLogic : MonoBehaviour
     public Button dateForthBtn;
     public Button dateBackBtn;
     public Transform scrollContent;
-    private List<GameObject> scrollObjects;
+    public List<GameObject> scrollObjects;
 
     // Start is called before the first frame update
     void Start()
@@ -172,7 +172,7 @@ public class TodayLogic : MonoBehaviour
         scrollObjects.Add(toDo);
         toDo.GetComponent<ToDoTaskLogic>().updateHeight();
     }
-    void removeTodo(GameObject toDo)
+    public void removeTodo(GameObject toDo)
     {
         scrollObjects.Remove(toDo);
         Destroy(toDo);

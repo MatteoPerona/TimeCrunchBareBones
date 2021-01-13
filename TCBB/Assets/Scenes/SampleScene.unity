@@ -722,7 +722,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 725264434}
   m_HandleRect: {fileID: 725264433}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1111,7 +1111,7 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 50
+    m_Top: 100
     m_Bottom: 0
   m_ChildAlignment: 1
   m_Spacing: 25
@@ -1951,6 +1951,7 @@ MonoBehaviour:
   dateForthBtn: {fileID: 1112617434}
   dateBackBtn: {fileID: 753124381}
   scrollContent: {fileID: 887462880}
+  scrollObjects: []
 --- !u!1 &1230776914
 GameObject:
   m_ObjectHideFlags: 0
@@ -2357,7 +2358,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 314577373}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
