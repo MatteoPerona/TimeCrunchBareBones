@@ -106,6 +106,7 @@ public class ProjectPanelLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        numTasks.text = project.incompleteTasks.Count.ToString();
     }
 
     void loadTasks()

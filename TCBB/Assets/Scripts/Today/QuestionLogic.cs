@@ -39,12 +39,37 @@ public class QuestionLogic : MonoBehaviour
                 }
             }
             FindObjectOfType<CrunchLogic>().destroyMe();
+            StartCoroutine(fadeCanvasGroup(gameObject.GetComponent<CanvasGroup>(), 0.25f, 1, 0, true));
         });
+    }
+
+    IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha, bool destroy=false)
+    {
+        float time = 0.0f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(time, startAlpha, duration, endAlpha);
+        while(time < duration)
+        {
+            float currentAlpha = curve.Evaluate(time);
+            group.alpha = currentAlpha;
+
+            yield return null;
+            time += Time.deltaTime;
+        }
+        group.alpha = endAlpha;
+        if (destroy)
+        {
+            destroyMe();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+    
+    void destroyMe()
+    {
+        Destroy(gameObject);
     }
 }

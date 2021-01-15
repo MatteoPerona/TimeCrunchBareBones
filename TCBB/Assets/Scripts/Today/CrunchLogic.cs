@@ -21,6 +21,7 @@ public class CrunchLogic : MonoBehaviour
     public bool adderClicked;
     public GameObject completedQuestion;
     public float crunchTime = 0.25f;
+    private float timePaused;
 
     void Start()
     {
@@ -129,7 +130,7 @@ public class CrunchLogic : MonoBehaviour
         else
         {
             GameObject newCompletedQuestion = Instantiate(completedQuestion, startPos, Quaternion.identity);
-            newCompletedQuestion.transform.SetParent(transform);
+            newCompletedQuestion.transform.SetParent(transform.parent);
             rect = newCompletedQuestion.GetComponent<RectTransform>();
         }
         float t = 0.0f;
@@ -149,5 +150,19 @@ public class CrunchLogic : MonoBehaviour
     public void destroyMe()
     {
         Destroy(gameObject);
+    }
+     
+    private void OnApplicationFocus(bool focusStatus)
+    {
+        if (!focusStatus)
+        {
+            Debug.Log("Paused");
+            timePaused = Time.time;
+        }
+        else
+        {
+            Debug.Log("Unpaused");
+            time -= Time.time-timePaused;
+        }
     }
 }

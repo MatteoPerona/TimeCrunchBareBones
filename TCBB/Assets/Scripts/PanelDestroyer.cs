@@ -17,9 +17,14 @@ public class PanelDestroyer : MonoBehaviour
         panelRect = gameObject.GetComponent<RectTransform>();
 
         doneBtn.onClick.AddListener(delegate{
-            StartCoroutine(fadeCanvasGroup(container.GetComponent<CanvasGroup>(), fadeTime, 1f, 0f));
-            StartCoroutine(scaleOutPanel(closeTime));
+            destructionProtocol();
         });
+    }
+
+    public void destructionProtocol()
+    {
+        StartCoroutine(fadeCanvasGroup(container.GetComponent<CanvasGroup>(), fadeTime, 1f, 0f));
+        StartCoroutine(scaleOutPanel(closeTime));
     }
 
     IEnumerator scaleOutPanel(float duration)

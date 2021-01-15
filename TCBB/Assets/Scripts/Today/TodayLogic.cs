@@ -13,14 +13,19 @@ public class TodayLogic : MonoBehaviour
     public Button dateBackBtn;
     public Transform scrollContent;
     public List<GameObject> scrollObjects;
+    public float fadeTime = 0.1f;
 
     // Start is called before the first frame update
     void Start()
     {
         date = System.DateTime.Now.Date;
 
-        dateForthBtn.onClick.AddListener(delegate{dateForth();});
-        dateBackBtn.onClick.AddListener(delegate{dateBack();});
+        dateForthBtn.onClick.AddListener(delegate{
+            StartCoroutine(scrollFader(delegate{dateForth();}));
+        });
+        dateBackBtn.onClick.AddListener(delegate{
+            StartCoroutine(scrollFader(delegate{dateBack();}));
+        });
     }
 
     // Update is called once per frame
@@ -32,8 +37,12 @@ public class TodayLogic : MonoBehaviour
     public void resetScroll()
     {
         dateBackBtn.interactable = true;
+        System.DateTime oldDate = date;
         date = System.DateTime.Now.Date;
-        updateScroll();
+        if (date < oldDate || date > oldDate)
+        {
+            StartCoroutine(scrollFader(delegate{updateScroll();}));   
+        }
     }
 
     void dateForth()
@@ -65,7 +74,12 @@ public class TodayLogic : MonoBehaviour
             date = date.AddDays(-1);
             updateScroll();
         }
-        
+    }
+    public IEnumerator scrollFader(UnityEngine.Events.UnityAction call)
+    {
+        yield return StartCoroutine(fadeCanvasGroup(scrollContent.gameObject.GetComponent<CanvasGroup>(), fadeTime, 1, 0));
+        call();
+        yield return StartCoroutine(fadeCanvasGroup(scrollContent.gameObject.GetComponent<CanvasGroup>(), fadeTime, 0, 1));
     }
 
     public void updateScroll()
@@ -177,5 +191,20 @@ public class TodayLogic : MonoBehaviour
     {
         scrollObjects.Remove(toDo);
         Destroy(toDo);
+    }
+
+    IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha)
+    {
+        float time = 0.0f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(time, startAlpha, duration, endAlpha);
+        while(time < duration)
+        {
+            float currentAlpha = curve.Evaluate(time);
+            group.alpha = currentAlpha;
+
+            yield return null;
+            time += Time.deltaTime;
+        }
+        group.alpha = endAlpha;
     }
 }
