@@ -53,7 +53,10 @@ public class ScreenManager : MonoBehaviour, IDragHandler, IEndDragHandler{
 
     private bool isMobile()
     {
-        if (FindObjectOfType<ProjectPanelLogic>() == null && FindObjectOfType<CrunchLogic>() == null)
+        if (FindObjectOfType<ProjectPanelLogic>() == null 
+            && FindObjectOfType<CrunchLogic>() == null
+            && FindObjectOfType<DeleteQPanelLogic>() == null
+            )
         {
             return true;
         }

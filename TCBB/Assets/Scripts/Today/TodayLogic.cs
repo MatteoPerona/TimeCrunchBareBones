@@ -31,6 +31,7 @@ public class TodayLogic : MonoBehaviour
 
     public void resetScroll()
     {
+        dateBackBtn.interactable = true;
         date = System.DateTime.Now.Date;
         updateScroll();
     }

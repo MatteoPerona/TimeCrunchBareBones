@@ -10,6 +10,7 @@ public class ButtonAnimator : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     public float scalingFactor = .8f;
     private Vector3 startSize;
     private Vector3 scalingVector;
+    public bool pressed;
 
     void Start() 
     {
@@ -19,11 +20,13 @@ public class ButtonAnimator : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        pressed = true;
         gameObject.LeanScale(Vector3.Scale(startSize, scalingVector), animTime);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        pressed = false;
         gameObject.LeanScale(startSize, animTime);
     }
 }
