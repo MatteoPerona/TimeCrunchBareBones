@@ -4,11 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class HoldOptions : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class HoldOptions : MonoBehaviour, IPointerDownHandler
 {
-    bool clicked;
     public bool holdOptsOpen;
-    public float holdTime = 1.5f;
+    public float holdTime = 1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,23 +21,17 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     
     public void OnPointerDown(PointerEventData eventData)
     {
-        clicked = true;
         StartCoroutine(holdCoroutine(holdTime));
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        clicked = false;
     }
 
     public IEnumerator holdCoroutine(float duration)
     {
         float time = 0.0f;
-        while (clicked)
+        while (FindObjectOfType<ButtonAnimator>().pressed)
         {
             if (time >= duration)
             {
-                FindObjectOfType<ProjectButton>().startHoldOptionsProcess();
+                gameObject.GetComponent<ProjectButton>().startHoldOptionsProcess();
                 holdOptsOpen = true;
                 break;
             }
@@ -57,7 +50,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (correctPress)
             {
                 bool mainPressed = gameObject.GetComponent<Button>().GetComponent<ButtonAnimator>().pressed;
-                bool delPressed = FindObjectOfType<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed;
+                bool delPressed = gameObject.GetComponent<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed;
                 if (!mainPressed && !delPressed)
                 {
                     correctPress = false;
@@ -69,14 +62,14 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 {
                     
                     bool mainPressed = gameObject.GetComponent<Button>().GetComponent<ButtonAnimator>().pressed;
-                    bool delPressed = FindObjectOfType<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed;
+                    bool delPressed = gameObject.GetComponent<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed;
                     if (mainPressed || delPressed)
                     {
                         correctPress = true;
                     }
                     else
                     {
-                        FindObjectOfType<ProjectButton>().endHoldOptionsProcess();
+                        gameObject.GetComponent<ProjectButton>().endHoldOptionsProcess();
                         holdOptsOpen = false;
                         break;
                     }

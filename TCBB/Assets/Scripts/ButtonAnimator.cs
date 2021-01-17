@@ -22,10 +22,20 @@ public class ButtonAnimator : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     {
         pressed = true;
         gameObject.LeanScale(Vector3.Scale(startSize, scalingVector), animTime);
+        StartCoroutine(pointerActuallyUp());
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        
+    }
+
+    IEnumerator pointerActuallyUp()
+    {
+        while (Input.touchCount > 0 || Input.anyKey)
+        {
+            yield return null;
+        }
         pressed = false;
         gameObject.LeanScale(startSize, animTime);
     }

@@ -53,7 +53,7 @@ public class ProjectPanelLogic : MonoBehaviour
         addTaskBtn.onClick.AddListener(delegate{
             createNewTask();
             GameObject newTaskEditor = Instantiate(taskEditor, addTaskBtn.gameObject.transform.localPosition, Quaternion.identity);
-            newTaskEditor.transform.SetParent(gameObject.transform.parent);
+            newTaskEditor.transform.SetParent(transform.parent);
             newTaskEditor.transform.position = Input.mousePosition;
         });
 

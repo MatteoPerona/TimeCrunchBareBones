@@ -134,6 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animTime: 0.06
   scalingFactor: 0.8
+  pressed: 0
 --- !u!1 &2481327953168186364
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,8 +198,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_Color: {r: 0.83921576, g: 0.83921576, b: 0.83921576, a: 1}
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -534,6 +535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animTime: 0.06
   scalingFactor: 0.8
+  pressed: 0
 --- !u!1 &7548368136637346873
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,6 +17,17 @@ public class Logic : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
+        /*
+        UserData user =  SaveData.LoadUser();
+        foreach (string s in user.projectTitles)
+        {
+            Debug.Log(s);
+        }
+        */
+
         addProjectBtn.onClick.AddListener(delegate{
             newProject = true;
             addProject();
@@ -37,29 +48,6 @@ public class Logic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    private void OnApplicationFocus(bool focusStatus) 
-    {
-        if (focusStatus)
-        {
-            UserData user =  SaveData.LoadUser();
-            foreach(Project p in user.activeProjects)
-            {
-                activeProject = p;
-                activeProjects.Add(p);
-                createProjectBtn();
-            }
-            foreach(Project p in user.finishedProjects)
-            {
-                finishedProjects.Add(p);
-            }
-        }
-        else
-        {
-            SaveData.saveUserData(gameObject.GetComponent<Logic>());
-        }
     }
 
     private void OnApplicationQuit() 
