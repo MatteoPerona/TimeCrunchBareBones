@@ -45,6 +45,6 @@ public class ToDoTaskLogic : MonoBehaviour
     {
         GameObject newCrunch = Instantiate(crunchScreen, Input.mousePosition, Quaternion.identity);
         newCrunch.GetComponent<CrunchLogic>().task = task;
-        newCrunch.transform.SetParent(FindObjectOfType<TodayLogic>().transform); 
+        newCrunch.transform.SetParent(FindObjectOfType<TodayLogic>().transform.parent.parent); 
     }
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Project
 {
-    public string title = "Title Here";
-    public string description = "Description here...";
+    public string title;
+    public string description;
     public List<Task> completedTasks = new List<Task>();
     public List<Task> incompleteTasks = new List<Task>();
 

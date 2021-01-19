@@ -49,6 +49,7 @@ public class ProjectPanelLogic : MonoBehaviour
 
         descriptionScaleY = descriptionContainer.gameObject.GetComponent<RectTransform>().localScale.y;
         descriptionToggle.onClick.AddListener(delegate{toggleDescription();});
+        description.onSelect.AddListener(delegate{toggleDescription();});
 
         addTaskBtn.onClick.AddListener(delegate{
             createNewTask();

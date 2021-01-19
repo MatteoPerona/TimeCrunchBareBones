@@ -19,6 +19,7 @@ public class TodayLogic : MonoBehaviour
     void Start()
     {
         date = System.DateTime.Now.Date;
+        dateText.text = date.ToString("d");
 
         dateForthBtn.onClick.AddListener(delegate{
             StartCoroutine(scrollFader(delegate{dateForth();}));
