@@ -22,6 +22,7 @@ public class DeleteQPanelLogic : MonoBehaviour
             FindObjectOfType<Logic>().activeProjects.Remove(project);
             Destroy(projectButton);
             StartCoroutine(fadeCanvasGroup(group, 0.25f, 1, 0));
+            FindObjectOfType<PeronaScroll>().findObjects();
         });
     }
 

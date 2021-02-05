@@ -30,7 +30,7 @@ public class ButtonAnimator : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         
     }
 
-    IEnumerator pointerActuallyUp()
+    public IEnumerator pointerActuallyUp()
     {
         while (Input.touchCount > 0 || Input.anyKey)
         {

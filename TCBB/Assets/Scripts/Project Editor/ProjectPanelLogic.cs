@@ -170,6 +170,7 @@ public class ProjectPanelLogic : MonoBehaviour
     {
         project.title = title.text;
         project.description = description.text;
+        FindObjectOfType<PeronaScroll>().findObjects();
     }
 
     IEnumerator toggleContainers(float duration, Transform t1, Transform t2)
