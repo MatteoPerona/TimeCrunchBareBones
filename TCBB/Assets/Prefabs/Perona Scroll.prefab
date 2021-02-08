@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 1319887252191994738}
   - component: {fileID: 1319887252191994739}
   - component: {fileID: 1319887252191994736}
+  - component: {fileID: 488819562456584494}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -211,6 +212,20 @@ MonoBehaviour:
   upButton: {fileID: 4533580075599992699}
   downButton: {fileID: 3333569490357017567}
   threshold: 500
+  group: {fileID: 488819562456584494}
+  animTime: 0.1
+--- !u!225 &488819562456584494
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319887252191994750}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &6062941104687793978
 PrefabInstance:
   m_ObjectHideFlags: 0

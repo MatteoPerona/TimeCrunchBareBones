@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9168429113445227023}
   - component: {fileID: 6414864774583271616}
   - component: {fileID: 3985363046957257066}
+  - component: {fileID: 8749173893744990728}
   m_Layer: 5
   m_Name: Down Btn
   m_TagString: Untagged
@@ -91,6 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -135,3 +137,15 @@ MonoBehaviour:
   animTime: 0.06
   scalingFactor: 0.8
   pressed: 0
+--- !u!225 &8749173893744990728
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240103082911197305}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

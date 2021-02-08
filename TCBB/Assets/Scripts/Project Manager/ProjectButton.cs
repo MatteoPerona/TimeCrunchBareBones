@@ -32,14 +32,14 @@ public class ProjectButton : MonoBehaviour
         taskCount.text = project.incompleteTasks.Count.ToString();
 
         parentPanel = FindObjectOfType<AddProjectButtonLogic>().parentPanel.transform;
-        gameObject.GetComponent<Button>().onClick.AddListener(delegate
+        /*gameObject.GetComponent<Button>().onClick.AddListener(delegate
         {
             FindObjectOfType<Logic>().activeProject = project;
             FindObjectOfType<Logic>().newProject = false;
             GameObject newEditor = Instantiate(projectPanel, transform.position, Quaternion.identity);
             newEditor.transform.SetParent(parentPanel.transform);
             newEditor.transform.position = Input.mousePosition;
-        });
+        });*/
     }
 
     // Update is called once per frame
@@ -48,6 +48,22 @@ public class ProjectButton : MonoBehaviour
         title.text = project.title;
         progress.fillAmount = project.progress();
         taskCount.text = project.incompleteTasks.Count.ToString();
+    }
+
+    void OnEnable()
+    {
+        gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
+        gameObject.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            FindObjectOfType<Logic>().activeProject = project;
+            FindObjectOfType<Logic>().newProject = false;
+            GameObject newEditor = Instantiate(projectPanel, transform.position, Quaternion.identity);
+            newEditor.transform.SetParent(parentPanel.transform);
+            newEditor.transform.position = Input.mousePosition;
+        });
+        regularLayout.GetComponent<CanvasGroup>().alpha = 1;
+        touchHoldOpts.GetComponent<CanvasGroup>().alpha = 0;
+        touchHoldOpts.SetActive(false);
     }
 
     public void startHoldOptionsProcess()
@@ -100,6 +116,8 @@ public class ProjectButton : MonoBehaviour
 
     public void destroyMe()
     {
+        transform.SetParent(transform.parent.parent);
         Destroy(gameObject);
+        FindObjectOfType<PeronaScroll>().findObjects();
     }
 }

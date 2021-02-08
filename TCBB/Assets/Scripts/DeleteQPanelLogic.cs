@@ -20,9 +20,8 @@ public class DeleteQPanelLogic : MonoBehaviour
         });
         doneBtn.onClick.AddListener(delegate{
             FindObjectOfType<Logic>().activeProjects.Remove(project);
-            Destroy(projectButton);
+            projectButton.GetComponent<ProjectButton>().destroyMe();
             StartCoroutine(fadeCanvasGroup(group, 0.25f, 1, 0));
-            FindObjectOfType<PeronaScroll>().findObjects();
         });
     }
 

@@ -2685,6 +2685,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1319887252191994736, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
+      propertyPath: defaultObs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319887252191994736, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
+      propertyPath: defaultObs.Array.data[0]
+      value: 
+      objectReference: {fileID: 441755473}
     - target: {fileID: 1319887252191994737, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0.5
@@ -2712,6 +2720,10 @@ PrefabInstance:
     - target: {fileID: 1319887252191994739, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_Padding.m_Top
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1319887252191994739, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
+      propertyPath: m_ChildAlignment
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3112010477998363644, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_RootOrder

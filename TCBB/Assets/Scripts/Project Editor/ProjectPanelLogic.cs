@@ -49,7 +49,10 @@ public class ProjectPanelLogic : MonoBehaviour
 
         descriptionScaleY = descriptionContainer.gameObject.GetComponent<RectTransform>().localScale.y;
         descriptionToggle.onClick.AddListener(delegate{toggleDescription();});
-        description.onSelect.AddListener(delegate{toggleDescription();});
+        description.onSelect.AddListener(delegate{
+            if (!descriptionOpen){
+                toggleDescription();}
+        });
 
         addTaskBtn.onClick.AddListener(delegate{
             createNewTask();
@@ -170,7 +173,10 @@ public class ProjectPanelLogic : MonoBehaviour
     {
         project.title = title.text;
         project.description = description.text;
-        FindObjectOfType<PeronaScroll>().findObjects();
+        if (FindObjectOfType<Logic>().newProject)
+        {
+            FindObjectOfType<PeronaScroll>().findObjects();
+        }
     }
 
     IEnumerator toggleContainers(float duration, Transform t1, Transform t2)

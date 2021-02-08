@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     public List<GameObject> objects;
     public Button upButton;
     public Button downButton;
-    public float threshold = 500;
+    public float threshold = 500.0f;
+    public CanvasGroup group;
+    public float animTime = .1f;
+    public List<GameObject> defaultObs;
     private float contentHeight;
     private int nextIndex;
-    private int prevIndex;
-    private List<GameObject> defaultObs;
+    private int currentIndex;
     private Vector3 startPos;
+    private Vector3 startPosDrag;
     private float dy;
 
     // Start is called before the first frame update
     void Start()
     {
+        startPos = transform.position;
+
         if (objects == null)
         {
             objects = new List<GameObject>();
@@ -30,10 +36,8 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
             defaultObs = new List<GameObject>();
         }
 
-        for (int i=0; i<transform.childCount; i++)
-        {
-            defaultObs.Add(transform.GetChild(i).gameObject);
-        }
+        defaultObs.Add(upButton.gameObject);
+        defaultObs.Add(downButton.gameObject);
 
         upButton.gameObject.SetActive(false);
         downButton.gameObject.SetActive(false);
@@ -42,9 +46,11 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
         upButton.onClick.AddListener(delegate{
             scrollUp();
+            pointersUp();
         });
         downButton.onClick.AddListener(delegate{
             scrollDown();
+            pointersUp();
         });
     }
 
@@ -73,17 +79,34 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
                 objects.Add(transform.GetChild(i).gameObject);
             }
         }
+        int index = 0;
+        foreach (GameObject o in defaultObs)
+        {
+            o.transform.SetSiblingIndex(index);
+            index++;
+        }
+        foreach (GameObject o in objects)
+        {
+            Debug.Log(o.GetComponentInChildren<TMP_Text>().text);
+        }
         resetScroll();
     }
 
     public void resetScroll()
     {
-        updateScroll(objects);
+        foreach (GameObject g in defaultObs)
+        {
+            g.SetActive(true);
+        }
+        upButton.gameObject.SetActive(false);
+        if (objects.Count > 0)
+        {
+            updateScroll(objects);
+        }
     }
 
     public void scrollDown()
     {
-        Debug.Log(objects.Count+" - "+nextIndex);
         foreach (GameObject g in objects)
         {
             g.SetActive(false);
@@ -92,9 +115,7 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         {
             g.SetActive(false);
         }
-        downButton.gameObject.SetActive(false);
-        upButton.gameObject.SetActive(true);
-        updateScroll(objects.GetRange(nextIndex, objects.Count-nextIndex), false);
+        updateScroll(objects.GetRange(nextIndex, objects.Count-nextIndex));
     }
 
     public void scrollUp()
@@ -102,74 +123,75 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         foreach (GameObject g in objects)
         {
             g.SetActive(false);
+        }        
+        int startOffset = 0;
+        for (int i=currentIndex-1; i>=0; i--)
+        {
+            if (objectsHeight(objects.GetRange(i,currentIndex-i)) > contentHeight)
+            {
+                break;
+            }
+            else
+            {
+                startOffset++;
+            }
         }
-        if (prevIndex == 0)
+        //Debug.Log("currentIndex-startOffset: "+currentIndex+"-"+startOffset);
+        if (currentIndex-startOffset == 0)
         {
             foreach (GameObject g in defaultObs)
             {
                 g.SetActive(true);
             }
+            upButton.gameObject.SetActive(false);
         }
-        downButton.gameObject.SetActive(true);
-        upButton.gameObject.SetActive(false);
-        updateScroll(objects.GetRange(prevIndex, objects.Count-prevIndex));
+        nextIndex = currentIndex;
+        updateScroll(objects.GetRange(currentIndex-startOffset, startOffset));
     }
     
-    public void updateScroll(List<GameObject> obs, bool updatePrev = true)
+    public void updateScroll(List<GameObject> obs)
     {
-        if (updatePrev)
-        {
-            prevIndex = objects.IndexOf(obs[0]);
-        }
-        bool firstInactive = false;
-        int endi = 0;
+        currentIndex = objects.IndexOf(obs[0]);
+        int count = 0;
         for (int i=0; i<obs.Count; i++)
         {
             if (objectsHeight(obs.GetRange(0,i+1)) > contentHeight)
             {
-                obs[i].SetActive(false);
-                if (!firstInactive)
+                foreach (GameObject o in obs.GetRange(i, obs.Count-i))
                 {
-                    firstInactive=true;
-                    nextIndex = objects.IndexOf(obs[i]);
-                    endi=i-1;
+                    o.SetActive(false);
                 }
+                nextIndex = objects.IndexOf(obs[i]);
+                break;
             }
             else
             {
                 obs[i].SetActive(true);
-                endi++;
+                count++;
             }
         }
-        if (endi < obs.Count)
-        {
-            checkMoveButtons(obs.GetRange(0, endi+1));
-        }
+        checkMoveButtons(obs.GetRange(0, count));
     }
 
     void checkMoveButtons(List<GameObject> obs)
     {
         if (obs.Contains(objects[0]) && obs.Contains(objects[objects.Count-1]))
         {
-            Debug.Log("Contains All");
             upButton.gameObject.SetActive(false);
             downButton.gameObject.SetActive(false);
         }
         else if (obs.Contains(objects[0]))
         {
-            Debug.Log("List is at top");
             upButton.gameObject.SetActive(false);
             downButton.gameObject.SetActive(true);
         }
         else if (obs.Contains(objects[objects.Count-1]))
         {
-            Debug.Log("List is at bottom");
             upButton.gameObject.SetActive(true);
             downButton.gameObject.SetActive(false);
         }
         else
         {
-            Debug.Log("List is at middle");
             upButton.gameObject.SetActive(true);
             downButton.gameObject.SetActive(true);
         }
@@ -180,50 +202,116 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public float objectsHeight(List<GameObject> obs)
     {
         VerticalLayoutGroup layoutVertical = gameObject.GetComponent<VerticalLayoutGroup>();
-        float h = layoutVertical.padding.bottom + layoutVertical.padding.top + (transform.childCount-1)*layoutVertical.spacing;
-        h += downButton.gameObject.GetComponent<RectTransform>().sizeDelta.y;
+        float h = layoutVertical.padding.bottom + layoutVertical.padding.top + (obs.Count+1)*layoutVertical.spacing;
+        float hI = h;
 
-        if (downButton.gameObject.activeSelf)
+        //int count=0;
+        foreach (GameObject g in defaultObs)
         {
-            h += downButton.gameObject.GetComponent<RectTransform>().sizeDelta.y;
+            if (g.activeSelf)
+            {
+                h += g.GetComponent<RectTransform>().sizeDelta.y;
+                //count++;
+            }
         }
-        if (upButton.gameObject.activeSelf)
-        {
-            h += upButton.gameObject.GetComponent<RectTransform>().sizeDelta.y;
-        }
+
+        //float hD = h-hI;
         
         foreach (GameObject o in obs)
         {
             h += o.GetComponent<RectTransform>().sizeDelta.y;
         }
 
+        //float hF = h-hD;
+        //Debug.Log("Count "+obs.Count+","+ " Default "+count+": "+hI+" + "+hD+" + "+hF+" = "+h);
+        
         return h;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        startPos = eventData.position;
+        startPosDrag = eventData.position;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        dy = eventData.position.y-startPos.y;
+        dy = eventData.position.y-startPosDrag.y;
+        
+        Vector3 currentPos = new Vector3(startPos.x, startPos.y+50*dy/threshold, startPos.z);
+        transform.position = currentPos;
+
+        if (dy>0 && downButton.gameObject.activeSelf)
+        {
+            downButton.gameObject.GetComponent<CanvasGroup>().alpha = dy/threshold;
+        }
+        else if (dy<0 && upButton.gameObject.activeSelf)
+        {
+            upButton.gameObject.GetComponent<CanvasGroup>().alpha = -1*dy/threshold;
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
+    {
+        
+        pointersUp();
+        if (dy > threshold && downButton.gameObject.activeSelf)
+        {
+            scrollDown();
+        }
+        else if (-1*dy > threshold && upButton.gameObject.activeSelf)
+        {
+            scrollUp();
+        }
+        downButton.gameObject.GetComponent<CanvasGroup>().alpha = 0;
+        upButton.gameObject.GetComponent<CanvasGroup>().alpha = 0;
+
+        StartCoroutine(smoothMove(gameObject, animTime, transform.position, startPos));
+    }
+
+    IEnumerator smoothMove(GameObject o, float duration, Vector3 iPos, Vector3 fPos)
+    {
+        float time = 0.0f;
+        while (time < duration)
+        {
+            o.transform.position = Vector3.Lerp(iPos, fPos, Mathf.Pow(time/duration, 1));
+
+            yield return null;
+            time += Time.deltaTime;
+        }
+        o.transform.position = fPos;
+    }
+
+    void pointersUp()
     {
         ButtonAnimator[] animators = FindObjectsOfType<ButtonAnimator>();
         foreach (ButtonAnimator a in animators)
         {
             StartCoroutine(a.pointerActuallyUp());
         }
-        if (dy > threshold && downButton.IsActive())
+    }
+
+    IEnumerator fadeOutFadeIn(CanvasGroup group, float duration, UnityEngine.Events.UnityAction call)
+    {
+        float time = 0.0f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(time, 1, duration, 0);
+        while(time < duration)
         {
-            scrollDown();
+            float currentAlpha = curve.Evaluate(time);
+            group.alpha = currentAlpha;
+
+            yield return null;
+            time += Time.deltaTime;
         }
-        else if (dy < threshold && upButton.IsActive())
+
+        time = 0.0f;
+        curve = AnimationCurve.EaseInOut(time, 0, duration, 1);
+        while(time < duration)
         {
-            scrollUp();
+            float currentAlpha = curve.Evaluate(time);
+            group.alpha = currentAlpha;
+
+            yield return null;
+            time += Time.deltaTime;
         }
     }
 }

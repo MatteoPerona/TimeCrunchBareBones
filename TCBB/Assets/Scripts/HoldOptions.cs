@@ -27,7 +27,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
     public IEnumerator holdCoroutine(float duration)
     {
         float time = 0.0f;
-        while (FindObjectOfType<ButtonAnimator>().pressed)
+        while (gameObject.GetComponent<ButtonAnimator>().pressed)
         {
             if (time >= duration)
             {
@@ -56,7 +56,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
                     correctPress = false;
                 }
             }
-            else if (time >= 1)
+            else if (time >= 0)
             {
                 if (Input.touchCount > 0)
                 {

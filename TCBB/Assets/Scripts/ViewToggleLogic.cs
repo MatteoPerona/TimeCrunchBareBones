@@ -77,6 +77,7 @@ public class ViewToggleLogic : MonoBehaviour
         bool updateTodayScroll = false;
         if (rect1.localPosition.x < 0)
         {
+            FindObjectOfType<PeronaScroll>().resetScroll();
             r1 = rect2;
             r2 = rect1;
             updateTodayScroll = true;

@@ -43,6 +43,7 @@ public class Logic : MonoBehaviour
     {
         GameObject newProjBtn = Instantiate(projectButton, transform.position, Quaternion.identity);
         newProjBtn.transform.SetParent(scrollContent.transform);
+        newProjBtn.transform.SetSiblingIndex(0);
     }
 
     // Update is called once per frame
