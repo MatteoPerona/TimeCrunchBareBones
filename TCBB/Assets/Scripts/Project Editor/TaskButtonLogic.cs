@@ -40,4 +40,9 @@ public class TaskButtonLogic : MonoBehaviour
     {
         title.text = task.title;
     }
+
+    public void destroyMe()
+    {
+        Destroy(gameObject);
+    }
 }

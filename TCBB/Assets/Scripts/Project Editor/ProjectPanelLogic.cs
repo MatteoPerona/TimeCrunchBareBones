@@ -17,9 +17,7 @@ public class ProjectPanelLogic : MonoBehaviour
     public TMP_Text numTasks;
     public GameObject descriptionContainer;
     public RectTransform layoutContainer;
-    public RectTransform viewportRect;
-    public GameObject scrollContentIncomplete;
-    public GameObject scrollContenComplete;
+    public GameObject scrollContent;
     public Button taskBtn;
     public Button toggle;
     public Button addTaskBtn;
@@ -27,9 +25,12 @@ public class ProjectPanelLogic : MonoBehaviour
     public Button doneBtn;
     private float descriptionScaleY;
     public float dToggleTime = 0.25f;
+    public float sToggleTime = 0.1f;
     private Vector2 dContainerSize;
     private RectTransform dContainer;
     private bool descriptionOpen;
+    private bool updateProjectScroll = false;
+    private List<GameObject> currentTasks;
     
     // Start is called before the first frame update
     void Start()
@@ -40,6 +41,13 @@ public class ProjectPanelLogic : MonoBehaviour
             project = FindObjectOfType<Logic>().activeProject;
         }
         loadProjectData(project);
+
+        if (currentTasks == null)
+        {
+            currentTasks = new List<GameObject>();
+        }
+
+        updateProjectScroll = FindObjectOfType<Logic>().newProject;
 
         dContainer = descriptionContainer.GetComponent<RectTransform>();
         dContainerSize = dContainer.sizeDelta;
@@ -67,15 +75,17 @@ public class ProjectPanelLogic : MonoBehaviour
         toggle.onClick.AddListener(delegate{
             if(incompleteTasksActive)
             {
-                StartCoroutine(toggleContainers(dToggleTime, scrollContentIncomplete.transform, scrollContenComplete.transform));
+                StartCoroutine(toggleContainers(sToggleTime, scrollContent.transform, true));
                 incompleteTasksActive = false;
             }
             else
             {
-                StartCoroutine(toggleContainers(dToggleTime, scrollContenComplete.transform, scrollContentIncomplete.transform));
+                StartCoroutine(toggleContainers(sToggleTime, scrollContent.transform));
                 incompleteTasksActive = true;
             }
         });
+
+        scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
 
     void loadProjectData(Project p)
@@ -94,56 +104,49 @@ public class ProjectPanelLogic : MonoBehaviour
         numTasks.text = project.incompleteTasks.Count.ToString();
     }
 
-    public void createNewTaskButton(bool incomplete = true)
+    public void createNewTaskButton()
     {
         GameObject newTaskButton = Instantiate(taskButton, transform.position, Quaternion.identity);
-        if (incomplete)
-        {
-            newTaskButton.transform.SetParent(scrollContentIncomplete.transform); 
-        }
-        else
-        {
-            newTaskButton.transform.SetParent(scrollContenComplete.transform); 
-        }
+        newTaskButton.transform.SetParent(scrollContent.transform); 
+        currentTasks.Add(newTaskButton);
     }
 
     // Update is called once per frame
     void Update()
     {
-        numTasks.text = project.incompleteTasks.Count.ToString();
     }
 
-    void loadTasks()
+    IEnumerator loadTasks(bool loadComplete = false)
     {
-        foreach (Task t in project.completedTasks)
+        List<Task> tasks = project.incompleteTasks;
+        if (loadComplete)
         {
-            activeTask = t;
-            createNewTaskButton(false);
-            numTasks.text = project.completedTasks.Count.ToString();
+            tasks = project.completedTasks;
         }
-
-        foreach (Task t in project.incompleteTasks)
+        yield return StartCoroutine(clearScroll());
+        foreach (Task t in tasks)
         {
             activeTask = t;
             createNewTaskButton();
-            numTasks.text = project.incompleteTasks.Count.ToString();
         }
+        numTasks.text = project.incompleteTasks.Count.ToString();
+        scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
 
     void toggleDescription()
     {
         if (descriptionOpen)
-            {
-                descriptionToggle.gameObject.LeanRotateZ(180f, 0f);
-                StartCoroutine(scaleHeightCorutine(dToggleTime, 1750f, 75f, 1f, 0.5f));
-                descriptionOpen = false;
-            }
+        {
+            descriptionToggle.gameObject.LeanRotateZ(180f, 0f);
+            StartCoroutine(scaleHeightCorutine(dToggleTime, 1750f, 75f, 1f, 0.5f));
+            descriptionOpen = false;
+        }
         else
-            {
-                descriptionToggle.gameObject.LeanRotateZ(0f, 0f);
-                StartCoroutine(scaleHeightCorutine(dToggleTime, 75f, 1750f, 0.5f, 1f));
-                descriptionOpen = true;
-            }
+        {
+            descriptionToggle.gameObject.LeanRotateZ(0f, 0f);
+            StartCoroutine(scaleHeightCorutine(dToggleTime, 75f, 1750f, 0.5f, 1f));
+            descriptionOpen = true;
+        }
     }
 
     IEnumerator scaleHeightCorutine(float duration, float startHeight, float endHeight, float startAlpha, float endAlpha)
@@ -173,31 +176,59 @@ public class ProjectPanelLogic : MonoBehaviour
     {
         project.title = title.text;
         project.description = description.text;
-        if (FindObjectOfType<Logic>().newProject)
+        if (updateProjectScroll)
         {
-            FindObjectOfType<PeronaScroll>().findObjects();
+            FindObjectOfType<Logic>().scrollContent.GetComponent<PeronaScroll>().findObjects();
         }
     }
 
-    IEnumerator toggleContainers(float duration, Transform t1, Transform t2)
+    IEnumerator toggleContainers(float duration, Transform content, bool loadComplete = false)
     {
-        Vector3 p1 = t1.localPosition;
-        Vector3 p2 = t2.localPosition;
-        Vector3 fp1 = p1;
-        fp1.x -= p2.x-p1.x+p1.x;
-
+        CanvasGroup group = content.GetComponent<CanvasGroup>();
         float time = 0.0f;
         while (time < duration)
         {
             float t = time/duration;
-            t2.localPosition = Vector3.Lerp(p2, p1, t);
-            t1.localPosition = Vector3.Lerp(p1, fp1, t);
+            group.alpha = Mathf.Lerp(1,0,t);
 
             yield return null;
             time += Time.deltaTime;
         }
-        t2.localPosition = p1;
-        t1.localPosition = fp1;
+        group.alpha = 0;
+        
+        yield return StartCoroutine(loadTasks(loadComplete));
+        if (loadComplete)
+        {
+            addTaskBtn.gameObject.SetActive(false);
+        }
 
+        time = 0.0f;
+        while (time < duration)
+        {
+            float t = time/duration;
+            group.alpha = Mathf.Lerp(0, 1, t);
+
+            yield return null;
+            time += Time.deltaTime;
+        }
+        group.alpha = 1;
+    }
+    IEnumerator clearScroll()
+    {
+        int i = 0;
+        if (currentTasks.Count < 1)
+        {
+            yield break;
+        }
+
+        while (i < currentTasks.Count)
+        {
+            currentTasks[i].GetComponent<TaskButtonLogic>().destroyMe();
+            i++;
+
+            yield return null;
+        }
+        currentTasks.Clear();
+        scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
 }

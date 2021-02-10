@@ -85,10 +85,6 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
             o.transform.SetSiblingIndex(index);
             index++;
         }
-        foreach (GameObject o in objects)
-        {
-            Debug.Log(o.GetComponentInChildren<TMP_Text>().text);
-        }
         resetScroll();
     }
 
@@ -99,6 +95,7 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
             g.SetActive(true);
         }
         upButton.gameObject.SetActive(false);
+        downButton.gameObject.SetActive(false);
         if (objects.Count > 0)
         {
             updateScroll(objects);
@@ -230,6 +227,7 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        startPos = transform.position;
         startPosDrag = eventData.position;
     }
 
@@ -242,11 +240,11 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
         if (dy>0 && downButton.gameObject.activeSelf)
         {
-            downButton.gameObject.GetComponent<CanvasGroup>().alpha = dy/threshold;
+            downButton.gameObject.GetComponent<CanvasGroup>().alpha = dy/threshold+0.2f;
         }
         else if (dy<0 && upButton.gameObject.activeSelf)
         {
-            upButton.gameObject.GetComponent<CanvasGroup>().alpha = -1*dy/threshold;
+            upButton.gameObject.GetComponent<CanvasGroup>().alpha = -1*dy/threshold+0.2f;
         }
     }
 
@@ -262,8 +260,8 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         {
             scrollUp();
         }
-        downButton.gameObject.GetComponent<CanvasGroup>().alpha = 0;
-        upButton.gameObject.GetComponent<CanvasGroup>().alpha = 0;
+        downButton.gameObject.GetComponent<CanvasGroup>().alpha = 0.2f;
+        upButton.gameObject.GetComponent<CanvasGroup>().alpha = 0.2f;
 
         StartCoroutine(smoothMove(gameObject, animTime, transform.position, startPos));
     }

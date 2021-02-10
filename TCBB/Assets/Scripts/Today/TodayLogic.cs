@@ -130,6 +130,7 @@ public class TodayLogic : MonoBehaviour
         {
             addToDo(t);
         }
+        
     }
 
     public void updateScrollPastDue()
@@ -187,11 +188,14 @@ public class TodayLogic : MonoBehaviour
         toDo.GetComponent<ToDoTaskLogic>().task = t;
         scrollObjects.Add(toDo);
         toDo.GetComponent<ToDoTaskLogic>().updateHeight();
+        scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
     public void removeTodo(GameObject toDo)
     {
         scrollObjects.Remove(toDo);
+        toDo.transform.SetParent(transform);
         Destroy(toDo);
+        scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
 
     IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha)

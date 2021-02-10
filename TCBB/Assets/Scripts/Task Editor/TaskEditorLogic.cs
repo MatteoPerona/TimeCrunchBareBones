@@ -46,6 +46,7 @@ public class TaskEditorLogic : MonoBehaviour
         task.description = description.text;
         task.dateToDo = date;
         task.timeEstimate = FindObjectOfType<TimeInput>().rawValueFromTime(timeEstimate.text);
+        FindObjectOfType<ProjectPanelLogic>().scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
 
     // Update is called once per frame

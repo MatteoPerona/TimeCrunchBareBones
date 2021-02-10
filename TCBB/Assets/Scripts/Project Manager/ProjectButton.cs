@@ -118,6 +118,6 @@ public class ProjectButton : MonoBehaviour
     {
         transform.SetParent(transform.parent.parent);
         Destroy(gameObject);
-        FindObjectOfType<PeronaScroll>().findObjects();
+        FindObjectOfType<Logic>().scrollContent.GetComponent<PeronaScroll>().findObjects();
     }
 }

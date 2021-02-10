@@ -23,6 +23,7 @@ public class QuestionLogic : MonoBehaviour
                 if (toDo.GetComponent<ToDoTaskLogic>().task == t)
                 {
                     FindObjectOfType<TodayLogic>().removeTodo(toDo);
+                    FindObjectOfType<TodayLogic>().scrollContent.GetComponent<PeronaScroll>().findObjects();
                     break;
                 }
             }
