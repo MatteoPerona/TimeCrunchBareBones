@@ -71,7 +71,7 @@ public class ProjectPanelLogic : MonoBehaviour
 
         doneBtn.onClick.AddListener(delegate{doneProtocol();});
 
-        loadTasks();
+        StartCoroutine(loadTasks());
         toggle.onClick.AddListener(delegate{
             if(incompleteTasksActive)
             {
