@@ -18,6 +18,7 @@ public class ViewToggleLogic : MonoBehaviour
         projectsBtn.onClick.AddListener(delegate{
             StartCoroutine(swapButtons(projectsBtn.GetComponent<RectTransform>(), todayBtn.GetComponent<RectTransform>(), animTime));
             StartCoroutine(changePanels(projectsPanel.GetComponent<RectTransform>(), todayPanel.GetComponent<RectTransform>(), animTime));
+            logicToJson(FindObjectOfType<Logic>());
         });
         todayBtn.onClick.AddListener(delegate{
             StartCoroutine(swapButtons(projectsBtn.GetComponent<RectTransform>(), todayBtn.GetComponent<RectTransform>(), animTime));
@@ -104,5 +105,40 @@ public class ViewToggleLogic : MonoBehaviour
         {
             FindObjectOfType<TodayLogic>().resetScroll();
         }
+    }
+
+    void logicToJson (Logic logic)
+    {
+        string data = "{\"activeProjects\": [";
+        foreach (Project p in logic.activeProjects)
+        {
+            string projectJson = JsonUtility.ToJson(p);
+            projectJson = projectJson.Substring(0, projectJson.Length-1);
+
+            projectJson += ", \"incompleteTasks\": [";
+            foreach (Task t in p.incompleteTasks)
+            {
+                string taskJson = JsonUtility.ToJson(t);
+                taskJson = taskJson.Substring(0, taskJson.Length-1);
+                taskJson += ", \"dateToDo\": "+t.dateToDo.ToString("d")+"}, ";
+                projectJson += taskJson;
+            }
+            
+            projectJson += ", \"completedTasks\": [";
+            foreach (Task t in p.completedTasks)
+            {
+                string taskJson = JsonUtility.ToJson(t);
+                taskJson = taskJson.Substring(0, taskJson.Length-1);
+                taskJson += ", \"dateToDo\": "+t.dateToDo.ToString("d")+"}, ";
+                projectJson += taskJson;
+            }
+
+            projectJson = projectJson.Substring(0, projectJson.Length-2);
+            projectJson += "]}, ";
+            data += projectJson;
+        }
+        data = data.Substring(0, data.Length-2);
+        data += "]}";
+        Debug.Log(data);
     }
 }

@@ -22,6 +22,11 @@ public class CrunchLogic : MonoBehaviour
     public GameObject completedQuestion;
     public float crunchTime = 0.25f;
     private float timePaused;
+    public Button descriptionToggle;
+    public float dToggleTime = 0.25f;
+    public RectTransform layoutContainer;
+    public RectTransform dContainer;
+    private bool descriptionOpen;
 
     void Start()
     {
@@ -55,6 +60,11 @@ public class CrunchLogic : MonoBehaviour
         crunchButton.onClick.AddListener(delegate{
             StartCoroutine(crunch(crunchTime));
         });
+
+        descriptionToggle.gameObject.LeanRotateZ(180f, 0f);
+        StartCoroutine(scaleHeightCorutine(0.0f, 1750f, 75f, 1f, 0.5f));
+
+        descriptionToggle.onClick.AddListener(delegate{toggleDescription();});
     }
 
     // Update is called once per frame
@@ -164,5 +174,44 @@ public class CrunchLogic : MonoBehaviour
             Debug.Log("Unpaused");
             time -= Time.time-timePaused;
         }
+    }
+
+    void toggleDescription()
+    {
+        if (descriptionOpen)
+        {
+            descriptionToggle.gameObject.LeanRotateZ(180f, 0f);
+            StartCoroutine(scaleHeightCorutine(dToggleTime, 1750f, 75f, 1f, 0.5f));
+            descriptionOpen = false;
+        }
+        else
+        {
+            descriptionToggle.gameObject.LeanRotateZ(0f, 0f);
+            StartCoroutine(scaleHeightCorutine(dToggleTime, 75f, 1750f, 0.5f, 1f));
+            descriptionOpen = true;
+        }
+    }
+
+    IEnumerator scaleHeightCorutine(float duration, float startHeight, float endHeight, float startAlpha, float endAlpha)
+    {
+        float time = 0.0f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(time, startHeight, duration, endHeight);
+        AnimationCurve alphaCurve = AnimationCurve.EaseInOut(time, startAlpha, duration, endAlpha);
+        while (time < duration)
+        {
+            float currentHeight = curve.Evaluate(time);
+            dContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, currentHeight);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(layoutContainer);
+
+            float currentAlpha = alphaCurve.Evaluate(time);
+            dContainer.GetComponent<CanvasGroup>().alpha = currentAlpha;
+
+            yield return null;
+            time += Time.deltaTime;
+        }
+        dContainer.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, endHeight);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(layoutContainer);
+
+        dContainer.GetComponent<CanvasGroup>().alpha = endAlpha;
     }
 }
