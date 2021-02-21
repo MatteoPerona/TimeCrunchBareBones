@@ -6,7 +6,7 @@ using TMPro;
 
 public class ProjectButton : MonoBehaviour
 {
-    private Project project;
+    public Project project;
     public GameObject projectPanel;
     private Transform parentPanel;
     public TMP_Text title;

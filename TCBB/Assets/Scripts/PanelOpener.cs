@@ -82,7 +82,7 @@ public class PanelOpener : MonoBehaviour
     {
         if (FindObjectOfType<Logic>().newProject)
         {
-            FindObjectOfType<Logic>().createProjectBtn();
+            FindObjectOfType<Logic>().createProjectBtn(FindObjectOfType<Logic>().activeProject);
         }
         
         if (FindObjectOfType<ProjectPanelLogic>() != null)

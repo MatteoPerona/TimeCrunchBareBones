@@ -5,13 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class UserData
 {
-    public List<string> projectTitles;
+    public List<Project> activeProjects;
+    public List<Project> finishedProjects;
 
-    public UserData (Logic logic)
+    public UserData (List<Project> aP, List<Project> fP)
     {
-        foreach (Project p in logic.finishedProjects)
-        {
-            projectTitles.Add(p.title);
-        }
+        activeProjects = aP;
+        finishedProjects = fP;
     }
 }
