@@ -271,6 +271,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: {fileID: 2228182218613676491}
   taskEditor: {fileID: 6969254154117298937, guid: 295e4121d8c46d349ae0e251f7e7795e, type: 3}
+  reActivateQuestion: {fileID: 4928722742371058038, guid: 809b13fe6312f6b4f8f4453d7c06560b, type: 3}
+  isComplete: 0
 --- !u!114 &-9154728467586455483
 MonoBehaviour:
   m_ObjectHideFlags: 0

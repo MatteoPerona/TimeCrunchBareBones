@@ -54,7 +54,7 @@ public class CrunchLogic : MonoBehaviour
 
         doneBtn.onClick.AddListener(delegate{
             task.timeEstimate = time/86400;
-            FindObjectOfType<TodayLogic>().updateScroll();
+            FindObjectOfType<TodayLogic>().resetScroll();
         });
 
         crunchButton.onClick.AddListener(delegate{

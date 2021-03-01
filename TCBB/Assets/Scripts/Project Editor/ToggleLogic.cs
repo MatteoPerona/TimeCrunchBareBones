@@ -33,6 +33,20 @@ public class ToggleLogic : MonoBehaviour
         completedIm.color = new Color(completedIm.color.r, completedIm.color.g, completedIm.color.b, 0f);
     }
 
+    public void swapImages()
+	{
+        if (completedActive)
+        {
+            StartCoroutine(changeImage(completedIm, inProgressIm, animTime));
+            completedActive = false;
+        }
+        else
+        {
+            StartCoroutine(changeImage(inProgressIm, completedIm, animTime));
+            completedActive = true;
+        }
+    }
+
     IEnumerator changeImage(Image im1, Image im2, float duration)
     {
         float time = 0.0f;

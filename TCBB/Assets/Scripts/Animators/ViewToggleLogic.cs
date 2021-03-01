@@ -73,7 +73,6 @@ public class ViewToggleLogic : MonoBehaviour
 		RectTransform r1 = rect1;
 		RectTransform r2 = rect2;
 		
-		FindObjectOfType<TodayLogic>().updateScroll();
 		bool updateTodayScroll = false;
 		if (rect1.localPosition.x < 0)
 		{
@@ -102,7 +101,8 @@ public class ViewToggleLogic : MonoBehaviour
 
 		if (updateTodayScroll)
 		{
-			FindObjectOfType<TodayLogic>().resetScroll();
+			FindObjectOfType<TodayLogic>().updateScroll(true);
+			//FindObjectOfType<TodayLogic>().resetScroll();
 		}
 	}
 }

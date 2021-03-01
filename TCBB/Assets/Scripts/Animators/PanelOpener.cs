@@ -89,7 +89,7 @@ public class PanelOpener : MonoBehaviour
         {
             if (FindObjectOfType<ProjectPanelLogic>().newTask)
             {
-                FindObjectOfType<ProjectPanelLogic>().createNewTaskButton();
+                FindObjectOfType<ProjectPanelLogic>().createNewTaskButton(false);
             }
         }
     }

@@ -73,19 +73,24 @@ public class ProjectPanelLogic : MonoBehaviour
 
         StartCoroutine(loadTasks());
         toggle.onClick.AddListener(delegate{
-            if(incompleteTasksActive)
-            {
-                StartCoroutine(toggleContainers(sToggleTime, scrollContent.transform, true));
-                incompleteTasksActive = false;
-            }
-            else
-            {
-                StartCoroutine(toggleContainers(sToggleTime, scrollContent.transform));
-                incompleteTasksActive = true;
-            }
+            toggleTaskScroll();
         });
 
         scrollContent.GetComponent<PeronaScroll>().findObjects();
+    }
+
+    public void toggleTaskScroll()
+	{
+        if (incompleteTasksActive)
+        {
+            StartCoroutine(toggleContainers(sToggleTime, scrollContent.transform, true));
+            incompleteTasksActive = false;
+        }
+        else
+        {
+            StartCoroutine(toggleContainers(sToggleTime, scrollContent.transform));
+            incompleteTasksActive = true;
+        }
     }
 
     void loadProjectData(Project p)
@@ -104,10 +109,11 @@ public class ProjectPanelLogic : MonoBehaviour
         numTasks.text = project.incompleteTasks.Count.ToString();
     }
 
-    public void createNewTaskButton()
+    public void createNewTaskButton(bool isComplete)
     {
         GameObject newTaskButton = Instantiate(taskButton, transform.position, Quaternion.identity);
-        newTaskButton.transform.SetParent(scrollContent.transform); 
+        newTaskButton.transform.SetParent(scrollContent.transform);
+        newTaskButton.GetComponent<TaskButtonLogic>().isComplete = isComplete;
         currentTasks.Add(newTaskButton);
     }
 
@@ -127,10 +133,15 @@ public class ProjectPanelLogic : MonoBehaviour
         foreach (Task t in tasks)
         {
             activeTask = t;
-            createNewTaskButton();
+            createNewTaskButton(loadComplete);
         }
         numTasks.text = project.incompleteTasks.Count.ToString();
         scrollContent.GetComponent<PeronaScroll>().findObjects();
+    }
+
+    public void resetTaskScroll()
+    {
+        StartCoroutine(loadTasks());
     }
 
     void toggleDescription()

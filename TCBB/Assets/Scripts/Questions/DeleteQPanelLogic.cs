@@ -16,12 +16,12 @@ public class DeleteQPanelLogic : MonoBehaviour
     {
         group = gameObject.GetComponent<CanvasGroup>();
         cancelBtn.onClick.AddListener(delegate{
-            StartCoroutine(fadeCanvasGroup(group, 0.25f, 1, 0));
+            StartCoroutine(fadeCanvasGroup(group, 0.15f, 1, 0));
         });
         doneBtn.onClick.AddListener(delegate{
             FindObjectOfType<Logic>().activeProjects.Remove(project);
             projectButton.GetComponent<ProjectButton>().destroyMe();
-            StartCoroutine(fadeCanvasGroup(group, 0.25f, 1, 0));
+            StartCoroutine(fadeCanvasGroup(group, 0.15f, 1, 0));
         });
     }
 
