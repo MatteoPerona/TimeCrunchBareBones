@@ -644,6 +644,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   holdOptsOpen: 0
   holdTime: 0.5
+  onProjectButton: 1
+  onTaskButton: 0
 --- !u!1 &9047585552766137715
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,6 +9,10 @@ public class TaskButtonLogic : MonoBehaviour
 	public TMP_Text title;
 	public GameObject taskEditor;
 	public GameObject reActivateQuestion;
+	public GameObject deleteQuestionPanel;
+	public GameObject touchHoldOpts;
+	public GameObject regularLayout;
+	public Button delete;
 	public bool isComplete;
 	private Task task;
 	private Transform parentTransform;
@@ -57,6 +61,39 @@ public class TaskButtonLogic : MonoBehaviour
 	void Update()
 	{
 		title.text = task.title;
+	}
+	
+	public void startHoldOptionsProcess()
+	{
+	}
+
+	public void endHoldOptionsProcess()
+	{
+	}
+
+	IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha)
+	{
+		float time = 0.0f;
+		AnimationCurve curve = AnimationCurve.EaseInOut(time, startAlpha, duration, endAlpha);
+		while (time < duration)
+		{
+			float currentAlpha = curve.Evaluate(time);
+			group.alpha = currentAlpha;
+
+			yield return null;
+			time += Time.deltaTime;
+		}
+		group.alpha = endAlpha;
+	}
+
+	void openDeleteQuestion()
+	{
+		GameObject newDeleteQ = Instantiate(deleteQuestionPanel, parentTransform.position, transform.rotation);
+		newDeleteQ.transform.SetParent(parentTransform);
+		newDeleteQ.transform.localPosition = new Vector3(0, 0, 0);
+		StartCoroutine(fadeCanvasGroup(newDeleteQ.GetComponent<CanvasGroup>(), 0.25f, 0, 1));
+		newDeleteQ.GetComponent<DeleteQPanelLogic>().task = task;
+		newDeleteQ.GetComponent<DeleteQPanelLogic>().setProjectButton(gameObject);
 	}
 
 	public void destroyMe()

@@ -8,6 +8,9 @@ public class ToDoTaskLogic : MonoBehaviour
 {
     public Task task;
     public TMP_Text title;
+    public GameObject touchHoldOpts;
+    public GameObject regularLayout;
+    public Button delete;
     private Button button;
     public GameObject crunchScreen;
 
@@ -46,5 +49,28 @@ public class ToDoTaskLogic : MonoBehaviour
         GameObject newCrunch = Instantiate(crunchScreen, Input.mousePosition, Quaternion.identity);
         newCrunch.GetComponent<CrunchLogic>().task = task;
         newCrunch.transform.SetParent(FindObjectOfType<TodayLogic>().transform.parent.parent); 
+    }
+
+    public void startHoldOptionsProcess()
+    {
+    }
+
+    public void endHoldOptionsProcess()
+    {
+    }
+
+    IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha)
+    {
+        float time = 0.0f;
+        AnimationCurve curve = AnimationCurve.EaseInOut(time, startAlpha, duration, endAlpha);
+        while (time < duration)
+        {
+            float currentAlpha = curve.Evaluate(time);
+            group.alpha = currentAlpha;
+
+            yield return null;
+            time += Time.deltaTime;
+        }
+        group.alpha = endAlpha;
     }
 }

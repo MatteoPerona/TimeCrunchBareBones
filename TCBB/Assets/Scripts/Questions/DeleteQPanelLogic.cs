@@ -7,6 +7,7 @@ using TMPro;
 public class DeleteQPanelLogic : MonoBehaviour
 {
     public Project project;
+    public Task task;
     public Button cancelBtn;
     public Button doneBtn;
     private CanvasGroup group;
