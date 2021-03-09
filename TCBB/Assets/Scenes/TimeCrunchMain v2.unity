@@ -627,6 +627,7 @@ GameObject:
   - component: {fileID: 753124381}
   - component: {fileID: 753124380}
   - component: {fileID: 753124384}
+  - component: {fileID: 753124385}
   m_Layer: 5
   m_Name: Back Day Btn
   m_TagString: Untagged
@@ -770,6 +771,18 @@ MonoBehaviour:
   animTime: 0.06
   scalingFactor: 0.8
   pressed: 0
+--- !u!225 &753124385
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 753124378}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &903483609
 GameObject:
   m_ObjectHideFlags: 0
@@ -1388,19 +1401,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1225416300829027884, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1225416300829027884, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1225416300829027884, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 562
       objectReference: {fileID: 0}
     - target: {fileID: 1225416300829027884, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -275
       objectReference: {fileID: 0}
     - target: {fileID: 1319887251533565544, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_Name
@@ -1416,7 +1429,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1319887251533565547, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1319887251533565547, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1516,19 +1529,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8281072986491005399, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8281072986491005399, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8281072986491005399, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 562
       objectReference: {fileID: 0}
     - target: {fileID: 8281072986491005399, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -150
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e423209d1bde1a94e990810e4f5b1e99, type: 3}
