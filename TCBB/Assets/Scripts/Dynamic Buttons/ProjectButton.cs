@@ -32,14 +32,6 @@ public class ProjectButton : MonoBehaviour
         taskCount.text = project.incompleteTasks.Count.ToString();
 
         parentPanel = FindObjectOfType<AddProjectButtonLogic>().parentPanel.transform;
-        /*gameObject.GetComponent<Button>().onClick.AddListener(delegate
-        {
-            FindObjectOfType<Logic>().activeProject = project;
-            FindObjectOfType<Logic>().newProject = false;
-            GameObject newEditor = Instantiate(projectPanel, transform.position, Quaternion.identity);
-            newEditor.transform.SetParent(parentPanel.transform);
-            newEditor.transform.position = Input.mousePosition;
-        });*/
     }
 
     // Update is called once per frame
@@ -111,7 +103,7 @@ public class ProjectButton : MonoBehaviour
         newDeleteQ.transform.localPosition = new Vector3(0,0,0);
         StartCoroutine(fadeCanvasGroup(newDeleteQ.GetComponent<CanvasGroup>(), 0.25f, 0, 1));
         newDeleteQ.GetComponent<DeleteQPanelLogic>().project = project;
-        newDeleteQ.GetComponent<DeleteQPanelLogic>().setProjectButton(gameObject);
+        newDeleteQ.GetComponent<DeleteQPanelLogic>().setTargetButton(gameObject);
     }
 
     public void destroyMe()

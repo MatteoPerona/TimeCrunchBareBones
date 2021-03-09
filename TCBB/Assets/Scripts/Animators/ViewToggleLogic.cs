@@ -76,10 +76,13 @@ public class ViewToggleLogic : MonoBehaviour
 		bool updateTodayScroll = false;
 		if (rect1.localPosition.x < 0)
 		{
-			FindObjectOfType<PeronaScroll>().resetScroll();
 			r1 = rect2;
 			r2 = rect1;
 			updateTodayScroll = true;
+		}
+		else
+		{
+			FindObjectOfType<TodayLogic>().updateScroll(true);
 		}
 
 		Vector3 pos1 = r1.localPosition;
@@ -102,7 +105,6 @@ public class ViewToggleLogic : MonoBehaviour
 		if (updateTodayScroll)
 		{
 			FindObjectOfType<TodayLogic>().updateScroll(true);
-			//FindObjectOfType<TodayLogic>().resetScroll();
 		}
 	}
 }

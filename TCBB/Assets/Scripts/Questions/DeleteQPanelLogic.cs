@@ -11,7 +11,7 @@ public class DeleteQPanelLogic : MonoBehaviour
     public Button cancelBtn;
     public Button doneBtn;
     private CanvasGroup group;
-    private GameObject projectButton;
+    private GameObject targetButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,9 +20,26 @@ public class DeleteQPanelLogic : MonoBehaviour
             StartCoroutine(fadeCanvasGroup(group, 0.15f, 1, 0));
         });
         doneBtn.onClick.AddListener(delegate{
-            FindObjectOfType<Logic>().activeProjects.Remove(project);
-            projectButton.GetComponent<ProjectButton>().destroyMe();
-            StartCoroutine(fadeCanvasGroup(group, 0.15f, 1, 0));
+            if (task == null)
+			{
+                FindObjectOfType<Logic>().activeProjects.Remove(project);
+                targetButton.GetComponent<ProjectButton>().destroyMe();
+                StartCoroutine(fadeCanvasGroup(group, 0.15f, 1, 0));
+            }
+            else
+			{
+                if (targetButton.GetComponent<TaskButtonLogic>().isComplete)
+				{
+                    project.completedTasks.Remove(task);
+				}
+                else
+				{
+                    project.incompleteTasks.Remove(task);
+                    FindObjectOfType<ProjectPanelLogic>().numTasks.text = project.incompleteTasks.Count.ToString();
+                }
+                targetButton.GetComponent<TaskButtonLogic>().destroyMeCompletely();
+                StartCoroutine(fadeCanvasGroup(group, 0.15f, 1, 0));
+            }
         });
     }
 
@@ -53,8 +70,8 @@ public class DeleteQPanelLogic : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void setProjectButton(GameObject b)
+    public void setTargetButton(GameObject b)
     {
-        projectButton = b;
+        targetButton = b;
     }
 }

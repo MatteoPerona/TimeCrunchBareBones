@@ -15,6 +15,7 @@ public class TaskButtonLogic : MonoBehaviour
 	public Button delete;
 	public bool isComplete;
 	private Task task;
+	private Project project;
 	private Transform parentTransform;
 
 	void Awake()
@@ -22,6 +23,10 @@ public class TaskButtonLogic : MonoBehaviour
 		if (task == null)
 		{
 			task = FindObjectOfType<ProjectPanelLogic>().activeTask;
+		}
+		if (project == null)
+		{
+			project = FindObjectOfType<ProjectPanelLogic>().project;
 		}
 	}
 
@@ -34,6 +39,21 @@ public class TaskButtonLogic : MonoBehaviour
 		{
 			task = FindObjectOfType<ProjectPanelLogic>().activeTask;
 		}
+
+		delete.onClick.AddListener(delegate { openDeleteQuestion(); });
+		touchHoldOpts.SetActive(false);
+	}
+
+	// Update is called once per frame
+	void Update()
+	{
+		title.text = task.title;
+	}
+
+	void OnEnable()
+	{
+		gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
+
 		if (!isComplete)
 		{
 			gameObject.GetComponent<Button>().onClick.AddListener(delegate
@@ -57,18 +77,20 @@ public class TaskButtonLogic : MonoBehaviour
 		}
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-		title.text = task.title;
-	}
-	
 	public void startHoldOptionsProcess()
 	{
+		gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
+		touchHoldOpts.SetActive(true);
+		StartCoroutine(fadeCanvasGroup(regularLayout.GetComponent<CanvasGroup>(), 0.25f, 1, 0));
+		StartCoroutine(fadeCanvasGroup(touchHoldOpts.GetComponent<CanvasGroup>(), 0.25f, 0, 1));
 	}
 
 	public void endHoldOptionsProcess()
 	{
+		OnEnable();
+		StartCoroutine(fadeCanvasGroup(regularLayout.GetComponent<CanvasGroup>(), 0.25f, 0, 1));
+		StartCoroutine(fadeCanvasGroup(touchHoldOpts.GetComponent<CanvasGroup>(), 0.25f, 1, 0));
+		touchHoldOpts.SetActive(false);
 	}
 
 	IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha)
@@ -93,11 +115,19 @@ public class TaskButtonLogic : MonoBehaviour
 		newDeleteQ.transform.localPosition = new Vector3(0, 0, 0);
 		StartCoroutine(fadeCanvasGroup(newDeleteQ.GetComponent<CanvasGroup>(), 0.25f, 0, 1));
 		newDeleteQ.GetComponent<DeleteQPanelLogic>().task = task;
-		newDeleteQ.GetComponent<DeleteQPanelLogic>().setProjectButton(gameObject);
+		newDeleteQ.GetComponent<DeleteQPanelLogic>().project = project;
+		newDeleteQ.GetComponent<DeleteQPanelLogic>().setTargetButton(gameObject);
 	}
 
 	public void destroyMe()
 	{
 		Destroy(gameObject);
+	}
+	public void destroyMeCompletely()
+	{
+		FindObjectOfType<ProjectPanelLogic>().removeTaskButton(gameObject);
+		transform.SetParent(transform.parent.parent);
+		Destroy(gameObject);
+		FindObjectOfType<ProjectPanelLogic>().resetTaskScroll();
 	}
 }

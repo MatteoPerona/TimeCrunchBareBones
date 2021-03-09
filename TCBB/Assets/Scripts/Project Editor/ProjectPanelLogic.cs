@@ -117,6 +117,11 @@ public class ProjectPanelLogic : MonoBehaviour
         currentTasks.Add(newTaskButton);
     }
 
+    public void removeTaskButton(GameObject taskButton)
+	{
+        currentTasks.Remove(taskButton);
+	}
+
     // Update is called once per frame
     void Update()
     {

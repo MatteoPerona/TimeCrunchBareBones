@@ -34,7 +34,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 			if (time >= duration)
 			{
 				if (onProjectButton) { gameObject.GetComponent<ProjectButton>().startHoldOptionsProcess(); }
-				else if (onProjectButton) { gameObject.GetComponent<TaskButtonLogic>().startHoldOptionsProcess(); }
+				else if (onTaskButton) { gameObject.GetComponent<TaskButtonLogic>().startHoldOptionsProcess(); }
 				else { gameObject.GetComponent<ToDoTaskLogic>().startHoldOptionsProcess(); }
 				holdOptsOpen = true;
 				break;
@@ -54,9 +54,10 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 			if (correctPress)
 			{
 				bool mainPressed = gameObject.GetComponent<Button>().GetComponent<ButtonAnimator>().pressed;
-				bool delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed;
+				bool delPressed;
 				if (onProjectButton) { delPressed = gameObject.GetComponent<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed; }
 				else if (onTaskButton) { delPressed = gameObject.GetComponent<TaskButtonLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
+				else { delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
 
 				if (!mainPressed && !delPressed)
 				{
@@ -69,18 +70,20 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 				{
 					
 					bool mainPressed = gameObject.GetComponent<Button>().GetComponent<ButtonAnimator>().pressed;
-					bool delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed;
+					bool delPressed;
 					if (onProjectButton) { delPressed = gameObject.GetComponent<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed; }
 					else if (onTaskButton) { delPressed = gameObject.GetComponent<TaskButtonLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
+					else { delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
 					if (mainPressed || delPressed)
 					{
 						correctPress = true;
 					}
 					else
 					{
-						gameObject.GetComponent<ProjectButton>().endHoldOptionsProcess();
+						
 						if (onProjectButton) { gameObject.GetComponent<ProjectButton>().endHoldOptionsProcess(); }
-						else if (onTaskButton) { gameObject.GetComponent<ProjectButton>().endHoldOptionsProcess(); }
+						else if (onTaskButton) { gameObject.GetComponent<TaskButtonLogic>().endHoldOptionsProcess(); }
+						else { gameObject.GetComponent<ToDoTaskLogic>().endHoldOptionsProcess(); }
 						holdOptsOpen = false;
 						break;
 					}

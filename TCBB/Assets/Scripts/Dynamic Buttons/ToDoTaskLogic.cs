@@ -73,4 +73,9 @@ public class ToDoTaskLogic : MonoBehaviour
         }
         group.alpha = endAlpha;
     }
+
+    public void destroyMe()
+	{
+        Destroy(gameObject);
+	}
 }
