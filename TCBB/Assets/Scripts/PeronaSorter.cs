@@ -19,8 +19,12 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 	private bool upPossible;
 	private bool downPossible;
 	private bool swappingObjects;
+	private bool holdOptsOpen;
+
+	private Coroutine currentCR;
+
 	public float waitTime = 1.0f;
-	public float animTime = 0.25f;
+	public float animTime = 0.08f;
 
 	void Start()
 	{
@@ -38,7 +42,11 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	public void OnBeginDrag(PointerEventData eventData)
 	{
-		calculatePositions(true);
+		holdOptsOpen = gameObject.GetComponent<HoldOptions>().holdOptsOpen;
+		if (holdOptsOpen)
+		{
+			calculatePositions(true);
+		}
 	}
 
 	void calculatePositions(bool init = false)
@@ -78,22 +86,74 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		}
 	}
 
+	public void OnDragOLD(PointerEventData data)
+	{
+		if (holdOptsOpen)
+		{
+			currentYPos = data.position.y;
+			Debug.Log(siblingIndex + " " + siblingPos);
+			if (!swappingObjects)
+			{
+				if (currentYPos < highPos.y && currentYPos > lowPos.y)
+				{
+					transform.position = new Vector3(siblingPos.x, data.position.y, 0);
+					if (currentYPos > upperSiblingPos.y)
+					{
+						StartCoroutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
+					}
+					else if (currentYPos < lowerSiblingPos.y)
+					{
+						StartCoroutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
+					}
+				}
+				else if (currentYPos < lowPos.y && downPossible)
+				{
+					StartCoroutine(scrollAfterSeconds(waitTime));
+				}
+				else if (currentYPos > highPos.y && upPossible)
+				{
+					StartCoroutine(scrollAfterSeconds(waitTime, false));
+				}
+			}
+			else
+			{
+				transform.position = new Vector3(siblingPos.x, data.position.y, 0);
+			}
+		}
+	}
+
+	//----------------------------------------------------------------------------------------------------------<
+
 	public void OnDrag(PointerEventData data)
 	{
-		currentYPos = data.position.y;
-		Debug.Log(currentYPos+" "+transform.position.y+" "+highPos.y+" "+lowPos.y);
-		if (!swappingObjects)
+		if (holdOptsOpen)
 		{
+			currentYPos = data.position.y;
+
 			if (currentYPos < highPos.y && currentYPos > lowPos.y)
 			{
 				transform.position = new Vector3(siblingPos.x, data.position.y, 0);
 				if (currentYPos > upperSiblingPos.y)
 				{
-					StartCoroutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
+					if (swappingObjects)
+					{
+						chainingRoutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
+					}
+					else
+					{
+						StartCoroutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
+					}
 				}
 				else if (currentYPos < lowerSiblingPos.y)
 				{
-					StartCoroutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
+					if (swappingObjects)
+					{
+						chainingRoutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
+					}
+					else
+					{
+						StartCoroutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
+					}
 				}
 			}
 			else if (currentYPos < lowPos.y && downPossible)
@@ -105,11 +165,9 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 				StartCoroutine(scrollAfterSeconds(waitTime, false));
 			}
 		}
-		else
-		{
-			transform.position = new Vector3(siblingPos.x, data.position.y, 0);
-		}
 	}
+
+	//---------------------------------------------------------------------------------------------------------->
 
 	public IEnumerator scrollAfterSeconds(float duration, bool down = true)
 	{
@@ -148,10 +206,17 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		StartCoroutine(setPosition(siblingIndex, transform, siblingPos, animTime, true));
+		if (holdOptsOpen && !swappingObjects)
+		{
+			StartCoroutine(setPosition(siblingIndex, transform, siblingPos, animTime, true));
+		}
+		else if (holdOptsOpen)
+		{
+			chainingRoutine(setPosition(siblingIndex, transform, siblingPos, animTime, true));
+		}
 	}
 
-	public IEnumerator setPosition(int newIndex, Transform a, Vector3 finalPos, float duration, bool final = false)
+	public IEnumerator setPositionOld(int newIndex, Transform a, Vector3 finalPos, float duration, bool final = false)
 	{
 		swappingObjects = true;
 		Vector3 posA = a.position;
@@ -159,17 +224,18 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		float time = 0.0f;
 		while (time < duration)
 		{
-			Vector3.Lerp(a.position, finalPos, (time / duration));
-			LayoutRebuilder.ForceRebuildLayoutImmediate(scrollContent.GetComponent<RectTransform>());
+			a.position = Vector3.Lerp(a.position, finalPos, (time / duration));
 			
 			yield return null;
 			time += Time.deltaTime;
 		}
 		a.position = finalPos;
+
 		if (!final)
 		{
 			siblingIndex = newIndex;
 			siblingPos = posA;
+			transform.SetSiblingIndex(siblingIndex);
 			calculatePositions();
 		}
 		else
@@ -178,5 +244,55 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		}
 
 		swappingObjects = false;
+	}
+
+
+	//----------------------------------------------------------------------------------------------------------<
+
+
+	public IEnumerator setPosition(int newIndex, Transform a, Vector3 finalPos, float duration, bool final = false)
+	{
+		swappingObjects = true;
+		Vector3 posA = a.position;
+
+		if (newIndex < siblingIndex) // Going Up
+		{
+			upperSiblingPos = scrollContent.GetChild(siblingIndex - 1).position;
+			lowerSiblingPos = scrollContent.GetChild(siblingIndex + 1).position;
+		}
+		else if (newIndex > siblingIndex) // Going Down
+		{
+
+		}
+
+		float time = 0.0f;
+		while (time < duration)
+		{
+			a.position = Vector3.Lerp(a.position, finalPos, (time / duration));
+
+			yield return null;
+			time += Time.deltaTime;
+		}
+		a.position = finalPos;
+
+		if (!final)
+		{
+			siblingIndex = newIndex;
+			siblingPos = posA;
+			transform.SetSiblingIndex(siblingIndex);
+			calculatePositions();
+		}
+		if (final)
+		{
+			transform.SetSiblingIndex(siblingIndex);
+		}
+
+		swappingObjects = false;
+	}
+
+	public IEnumerator chainingRoutine(IEnumerator cr1)
+	{
+		yield return currentCR;
+		currentCR = StartCoroutine(cr1);
 	}
 }

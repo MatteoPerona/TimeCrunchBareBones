@@ -28,6 +28,7 @@ public class TaskButtonLogic : MonoBehaviour
 		{
 			project = FindObjectOfType<ProjectPanelLogic>().project;
 		}
+		Debug.Log(isComplete);
 	}
 
 	// Start is called before the first frame update

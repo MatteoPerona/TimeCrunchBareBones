@@ -660,7 +660,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waitTime: 1
-  animTime: 0.25
+  animTime: 0.08
 --- !u!1 &9047585552766137715
 GameObject:
   m_ObjectHideFlags: 0
