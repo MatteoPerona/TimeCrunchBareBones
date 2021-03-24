@@ -113,7 +113,7 @@ public class ProjectPanelLogic : MonoBehaviour
     {
         GameObject newTaskButton = Instantiate(taskButton, transform.position, Quaternion.identity);
         newTaskButton.transform.SetParent(scrollContent.transform);
-        newTaskButton.GetComponent<TaskButtonLogic>().isComplete = isComplete;
+        newTaskButton.GetComponent<TaskButtonLogic>().setComplete(isComplete);
         currentTasks.Add(newTaskButton);
     }
 

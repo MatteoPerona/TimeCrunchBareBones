@@ -28,7 +28,6 @@ public class TaskButtonLogic : MonoBehaviour
 		{
 			project = FindObjectOfType<ProjectPanelLogic>().project;
 		}
-		Debug.Log(isComplete);
 	}
 
 	// Start is called before the first frame update
@@ -51,7 +50,7 @@ public class TaskButtonLogic : MonoBehaviour
 		title.text = task.title;
 	}
 
-	void OnEnable()
+	void SetListeners()
 	{
 		gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
 
@@ -78,6 +77,12 @@ public class TaskButtonLogic : MonoBehaviour
 		}
 	}
 
+	public void setComplete(bool completed)
+	{
+		isComplete = completed;
+		SetListeners();
+	}
+
 	public void startHoldOptionsProcess()
 	{
 		gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -88,7 +93,7 @@ public class TaskButtonLogic : MonoBehaviour
 
 	public void endHoldOptionsProcess()
 	{
-		OnEnable();
+		SetListeners();
 		StartCoroutine(fadeCanvasGroup(regularLayout.GetComponent<CanvasGroup>(), 0.25f, 0, 1));
 		StartCoroutine(fadeCanvasGroup(touchHoldOpts.GetComponent<CanvasGroup>(), 0.25f, 1, 0));
 		touchHoldOpts.SetActive(false);

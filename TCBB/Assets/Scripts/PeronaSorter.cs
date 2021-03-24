@@ -9,22 +9,31 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 {
 	private Transform scrollContent;
 	private PeronaScroll scroll;
-	private int siblingIndex;
+
 	private Vector3 siblingPos;
-	private Vector3 upperSiblingPos;
-	private Vector3 lowerSiblingPos;
+
+	private int originIndex;
+	private int deltaIndex;
+
+	private Vector3 upperSibling;
+	private Vector3 lowerSibling;
+
 	private Vector3 highPos;
 	private Vector3 lowPos;
+
 	private float currentYPos;
+
 	private bool upPossible;
 	private bool downPossible;
-	private bool swappingObjects;
 	private bool holdOptsOpen;
 
 	private Coroutine currentCR;
+	private List<IEnumerator> routineQue;
+	private bool awaiting = false;
 
 	public float waitTime = 1.0f;
-	public float animTime = 0.08f;
+	public float animTime = 0.05f;
+
 
 	void Start()
 	{
@@ -33,141 +42,204 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 			scrollContent = transform.parent;
 			scroll = scrollContent.GetComponent<PeronaScroll>();
 		}
+
+		if (routineQue == null)
+		{
+			routineQue = new List<IEnumerator>();
+		}
 	}
+
 
 	void Update()
 	{
 		
 	}
 
+
 	public void OnBeginDrag(PointerEventData eventData)
 	{
 		holdOptsOpen = gameObject.GetComponent<HoldOptions>().holdOptsOpen;
 		if (holdOptsOpen)
 		{
-			calculatePositions(true);
+			calculatePositions();
 		}
 	}
 
-	void calculatePositions(bool init = false)
+
+	void calculatePositions()
 	{
-		if (init)
-		{
-			siblingIndex = transform.GetSiblingIndex();
-			siblingPos = transform.position;
-		}
+		siblingPos = transform.position;
 
-		upPossible = false;
-		downPossible = false;
+		originIndex = transform.GetSiblingIndex();
+		deltaIndex = 0;
 
-		upperSiblingPos = scrollContent.GetChild(siblingIndex - 1).position;
-		lowerSiblingPos = scrollContent.GetChild(siblingIndex + 1).position;
+		upperSibling = scrollContent.GetChild(originIndex - 1).position;
+		lowerSibling = scrollContent.GetChild(originIndex + 1).position;
 
-		if (scroll.upButton.gameObject.activeSelf)
-		{
-			highPos = scroll.upButton.transform.position;
-			upPossible = true;
-		}
-		else
-		{
-			highPos = scroll.defaultObs[scroll.defaultObs.Count - 3].transform.position;
-		}
-		if (scroll.downButton.gameObject.activeSelf)
-		{
-			lowPos = scroll.downButton.transform.position;
-			downPossible = true;
-		}
-		else
-		{
-			Transform lastChild = scrollContent.GetChild(scrollContent.childCount-1);
-			lowPos = lastChild.position;
-			float halfHeight = lastChild.GetComponent<RectTransform>().sizeDelta.y/2;
-			lowPos = new Vector3(0f, lowPos.y - halfHeight, 0f);
-		}
-	}
+		upPossible = scroll.upButton.gameObject.activeSelf;
+		downPossible = scroll.downButton.gameObject.activeSelf;
 
-	public void OnDragOLD(PointerEventData data)
-	{
-		if (holdOptsOpen)
+		//Find High Pos
+		for (int x = 0; x < scrollContent.childCount; x++)
 		{
-			currentYPos = data.position.y;
-			Debug.Log(siblingIndex + " " + siblingPos);
-			if (!swappingObjects)
+			Transform currentT = scrollContent.GetChild(x);
+			bool isDefaultOb = isDefault(currentT);
+			if (!isDefaultOb)
 			{
-				if (currentYPos < highPos.y && currentYPos > lowPos.y)
-				{
-					transform.position = new Vector3(siblingPos.x, data.position.y, 0);
-					if (currentYPos > upperSiblingPos.y)
-					{
-						StartCoroutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
-					}
-					else if (currentYPos < lowerSiblingPos.y)
-					{
-						StartCoroutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
-					}
-				}
-				else if (currentYPos < lowPos.y && downPossible)
-				{
-					StartCoroutine(scrollAfterSeconds(waitTime));
-				}
-				else if (currentYPos > highPos.y && upPossible)
-				{
-					StartCoroutine(scrollAfterSeconds(waitTime, false));
-				}
+				float height = currentT.GetComponent<RectTransform>().sizeDelta.y;
+				highPos = new Vector3(currentT.position.x, currentT.position.y + height / 4, currentT.position.z);
+				break;
 			}
-			else
+		}
+
+		//Find Low Pos
+		for (int x = scrollContent.childCount - 1; x >= 0; x--)
+		{
+			Transform currentT = scrollContent.GetChild(x);
+			bool isDefaultOb = isDefault(currentT);
+			if (!isDefaultOb)
 			{
-				transform.position = new Vector3(siblingPos.x, data.position.y, 0);
+				float height = currentT.GetComponent<RectTransform>().sizeDelta.y;
+				lowPos = new Vector3(currentT.position.x, currentT.position.y, currentT.position.z);
+				Debug.Log(lowPos);
+				break;
 			}
 		}
 	}
 
-	//----------------------------------------------------------------------------------------------------------<
+	private bool isDefault(Transform t)
+	{
+		foreach (GameObject g in scroll.defaultObs)
+		{
+			if (t == g.transform)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
-	public void OnDrag(PointerEventData data)
+
+	public void OnDrag(PointerEventData data) 
 	{
 		if (holdOptsOpen)
 		{
 			currentYPos = data.position.y;
 
+			//sorting current layer
 			if (currentYPos < highPos.y && currentYPos > lowPos.y)
 			{
 				transform.position = new Vector3(siblingPos.x, data.position.y, 0);
-				if (currentYPos > upperSiblingPos.y)
+
+				if (currentYPos > upperSibling.y)// Up
 				{
-					if (swappingObjects)
-					{
-						chainingRoutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
-					}
-					else
-					{
-						StartCoroutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
-					}
+					Debug.Log("going up");
+
+					deltaIndex -= 1;
+					Transform target = scrollContent.GetChild(originIndex + deltaIndex);
+					Vector3 tempSiblingPos = siblingPos;
+
+					setPositionGlobal(deltaIndex, target);
+					StartCoroutine(chainingRoutine(setPosition(target, tempSiblingPos, animTime)));
 				}
-				else if (currentYPos < lowerSiblingPos.y)
+				else if (currentYPos < lowerSibling.y)// Down
 				{
-					if (swappingObjects)
-					{
-						chainingRoutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
-					}
-					else
-					{
-						StartCoroutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
-					}
+					Debug.Log("going down");
+
+					deltaIndex += 1;
+					Transform target = scrollContent.GetChild(originIndex + deltaIndex);
+					Vector3 tempSiblingPos = siblingPos;
+
+					setPositionGlobal(deltaIndex, target);
+					StartCoroutine(chainingRoutine(setPosition(target, tempSiblingPos, animTime)));
 				}
 			}
-			else if (currentYPos < lowPos.y && downPossible)
+			//scroll down
+			else if (currentYPos == lowPos.y && downPossible)
 			{
 				StartCoroutine(scrollAfterSeconds(waitTime));
 			}
-			else if (currentYPos > highPos.y && upPossible)
+			//scroll up
+			else if (currentYPos == highPos.y && upPossible)
 			{
 				StartCoroutine(scrollAfterSeconds(waitTime, false));
 			}
 		}
 	}
 
-	//---------------------------------------------------------------------------------------------------------->
+
+	public void OnEndDrag(PointerEventData eventData)
+	{
+		StartCoroutine(chainingRoutine(setPosition(transform, siblingPos, animTime, true)));
+	}
+
+
+	public void setPositionGlobal(int dIndex, Transform a)
+	{
+		siblingPos = a.position;
+
+		if (dIndex < 0) // Going Up
+		{
+			int us = dIndex + originIndex - 1;
+			int ls = dIndex + originIndex;
+			Debug.Log("US: " + us + ", LS: " + ls);
+
+			upperSibling = scrollContent.GetChild(dIndex + originIndex - 1).position;
+			lowerSibling = scrollContent.GetChild(dIndex + originIndex).position;
+		}
+		else if (dIndex > 0) // Going Down
+		{
+			int ls = dIndex + originIndex + 1;
+			int us = dIndex + originIndex;
+			Debug.Log("LS: " + ls + ", US: " + us);
+
+			lowerSibling = scrollContent.GetChild(dIndex + originIndex + 1).position;
+			upperSibling = scrollContent.GetChild(dIndex + originIndex).position;
+		}
+	}
+
+
+	public IEnumerator setPosition(Transform a, Vector3 finalPos, float duration, bool final = false) // Testing this one
+	{
+		Vector3 posA = a.position;
+
+		float time = 0.0f;
+		while (time < duration)
+		{
+			a.position = Vector3.Lerp(posA, finalPos, (time / duration));
+
+			yield return null;
+			time += Time.deltaTime;
+		}
+		a.position = finalPos;
+
+		if (final)
+		{
+			transform.SetSiblingIndex(originIndex + deltaIndex);
+		}
+	}
+
+
+	public IEnumerator chainingRoutine(IEnumerator cr1)
+	{
+		routineQue.Add(cr1);
+		if (!awaiting)
+		{
+			awaiting = true;
+			currentCR = StartCoroutine(routineQue[0]);
+			while (routineQue.Count > 0)
+			{
+				yield return currentCR;
+				routineQue.RemoveAt(0);
+				if (routineQue.Count > 0)
+				{
+					currentCR = StartCoroutine(routineQue[0]);
+				}
+			}
+			awaiting = false;
+		}
+	}
+
 
 	public IEnumerator scrollAfterSeconds(float duration, bool down = true)
 	{
@@ -176,12 +248,12 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		float time = 0.0f;
 		while (time < duration)
 		{
-			if (down && currentYPos > lowerSiblingPos.y)
+			if (down && currentYPos > lowerSibling.y)
 			{
 				scrollable = false;
 				break;
 			}
-			else if (currentYPos < upperSiblingPos.y)
+			else if (currentYPos < upperSibling.y)
 			{
 				scrollable = false;
 				break;
@@ -202,97 +274,5 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 				scroll.scrollUp();
 			}
 		}
-	}
-
-	public void OnEndDrag(PointerEventData eventData)
-	{
-		if (holdOptsOpen && !swappingObjects)
-		{
-			StartCoroutine(setPosition(siblingIndex, transform, siblingPos, animTime, true));
-		}
-		else if (holdOptsOpen)
-		{
-			chainingRoutine(setPosition(siblingIndex, transform, siblingPos, animTime, true));
-		}
-	}
-
-	public IEnumerator setPositionOld(int newIndex, Transform a, Vector3 finalPos, float duration, bool final = false)
-	{
-		swappingObjects = true;
-		Vector3 posA = a.position;
-
-		float time = 0.0f;
-		while (time < duration)
-		{
-			a.position = Vector3.Lerp(a.position, finalPos, (time / duration));
-			
-			yield return null;
-			time += Time.deltaTime;
-		}
-		a.position = finalPos;
-
-		if (!final)
-		{
-			siblingIndex = newIndex;
-			siblingPos = posA;
-			transform.SetSiblingIndex(siblingIndex);
-			calculatePositions();
-		}
-		else
-		{
-			transform.SetSiblingIndex(siblingIndex);
-		}
-
-		swappingObjects = false;
-	}
-
-
-	//----------------------------------------------------------------------------------------------------------<
-
-
-	public IEnumerator setPosition(int newIndex, Transform a, Vector3 finalPos, float duration, bool final = false)
-	{
-		swappingObjects = true;
-		Vector3 posA = a.position;
-
-		if (newIndex < siblingIndex) // Going Up
-		{
-			upperSiblingPos = scrollContent.GetChild(siblingIndex - 1).position;
-			lowerSiblingPos = scrollContent.GetChild(siblingIndex + 1).position;
-		}
-		else if (newIndex > siblingIndex) // Going Down
-		{
-
-		}
-
-		float time = 0.0f;
-		while (time < duration)
-		{
-			a.position = Vector3.Lerp(a.position, finalPos, (time / duration));
-
-			yield return null;
-			time += Time.deltaTime;
-		}
-		a.position = finalPos;
-
-		if (!final)
-		{
-			siblingIndex = newIndex;
-			siblingPos = posA;
-			transform.SetSiblingIndex(siblingIndex);
-			calculatePositions();
-		}
-		if (final)
-		{
-			transform.SetSiblingIndex(siblingIndex);
-		}
-
-		swappingObjects = false;
-	}
-
-	public IEnumerator chainingRoutine(IEnumerator cr1)
-	{
-		yield return currentCR;
-		currentCR = StartCoroutine(cr1);
 	}
 }
