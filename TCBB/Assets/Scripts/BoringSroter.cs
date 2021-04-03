@@ -82,28 +82,6 @@ public class BoringSroter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 				break;
 			}
 		}
-
-		/*if (scroll.upButton.gameObject.activeSelf)
-		{
-			highPos = scroll.upButton.transform.position;
-			upPossible = true;
-		}
-		else
-		{
-			highPos = scroll.defaultObs[scroll.defaultObs.Count - 3].transform.position;
-		}
-		if (scroll.downButton.gameObject.activeSelf)
-		{
-			lowPos = scroll.downButton.transform.position;
-			downPossible = true;
-		}
-		else
-		{
-			Transform lastChild = scrollContent.GetChild(scrollContent.childCount - 1);
-			lowPos = lastChild.position;
-			float halfHeight = lastChild.GetComponent<RectTransform>().sizeDelta.y / 2;
-			lowPos = new Vector3(0f, lowPos.y - halfHeight, 0f);
-		}*/
 	}
 
 	private bool isDefault(Transform t)
@@ -129,11 +107,13 @@ public class BoringSroter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 				transform.position = new Vector3(siblingPos.x, data.position.y, 0);
 				if (currentYPos > upperSiblingPos.y)
 				{
-					StartCoroutine(setPosition(siblingIndex - 1, scrollContent.GetChild(siblingIndex - 1), siblingPos, animTime));
+					siblingIndex -= 1;
+					transform.SetSiblingIndex(siblingIndex);
 				}
 				else if (currentYPos < lowerSiblingPos.y)
 				{
-					StartCoroutine(setPosition(siblingIndex + 1, scrollContent.GetChild(siblingIndex + 1), siblingPos, animTime));
+					siblingIndex += 1;
+					transform.SetSiblingIndex(siblingIndex);
 				}
 			}
 			else if (currentYPos < lowPos.y && downPossible)

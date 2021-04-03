@@ -13,7 +13,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 	// Start is called before the first frame update
 	void Start()
 	{
-		
+		togglePeronaSorter();
 	}
 
 	// Update is called once per frame
@@ -37,6 +37,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 				else if (onTaskButton) { gameObject.GetComponent<TaskButtonLogic>().startHoldOptionsProcess(); }
 				else { gameObject.GetComponent<ToDoTaskLogic>().startHoldOptionsProcess(); }
 				holdOptsOpen = true;
+				togglePeronaSorter();
 				break;
 			}
 			yield return null;
@@ -85,6 +86,7 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 						else if (onTaskButton) { gameObject.GetComponent<TaskButtonLogic>().endHoldOptionsProcess(); }
 						else { gameObject.GetComponent<ToDoTaskLogic>().endHoldOptionsProcess(); }
 						holdOptsOpen = false;
+						togglePeronaSorter();
 						break;
 					}
 				}
@@ -93,4 +95,17 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 			time += Time.deltaTime;
 		}
 	}
+
+	void togglePeronaSorter()
+	{
+		try
+		{
+			GetComponent<PeronaSorter>().enabled = holdOptsOpen;
+		}
+		catch
+		{
+			Debug.Log("No PeronaSorter found");
+		}
+	}
+
 }

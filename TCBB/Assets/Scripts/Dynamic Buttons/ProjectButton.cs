@@ -31,7 +31,7 @@ public class ProjectButton : MonoBehaviour
         progress.fillAmount = project.progress();
         taskCount.text = project.incompleteTasks.Count.ToString();
 
-        parentPanel = FindObjectOfType<AddProjectButtonLogic>().parentPanel.transform;
+        parentPanel = FindObjectOfType<Canvas>().transform;
     }
 
     // Update is called once per frame
@@ -42,6 +42,7 @@ public class ProjectButton : MonoBehaviour
         taskCount.text = project.incompleteTasks.Count.ToString();
     }
 
+    
     void OnEnable()
     {
         gameObject.GetComponent<Button>().onClick.RemoveAllListeners();

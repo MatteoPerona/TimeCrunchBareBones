@@ -79,6 +79,11 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		upPossible = scroll.upButton.gameObject.activeSelf;
 		downPossible = scroll.downButton.gameObject.activeSelf;
 
+		if (!upPossible)
+		{
+			Debug.Log("up button "+scroll.upButton.transform.position);
+		}
+
 		//Find High Pos
 		for (int x = 0; x < scrollContent.childCount; x++)
 		{
