@@ -21,11 +21,12 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 	private Vector3 startPos;
 	private Vector3 startPosDrag;
 	private float dy;
+	private bool startPosSet;
 
 	// Start is called before the first frame update
 	void Start()
 	{
-		startPos = transform.position;
+		startPosSet = false;
 
 		if (objects == null)
 		{
@@ -228,7 +229,11 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	public void OnBeginDrag(PointerEventData eventData)
 	{
-		//startPos = transform.position;
+		if (!startPosSet)
+		{
+			startPos = transform.position;
+			startPosSet = true;
+		}
 		startPosDrag = eventData.position;
 	}
 
@@ -255,12 +260,10 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		pointersUp();
 		if (dy > threshold && downButton.gameObject.activeSelf)
 		{
-			//scrollDown();
 			StartCoroutine(scrollRoutine(animTime));
 		}
 		else if (-1*dy > threshold && upButton.gameObject.activeSelf)
 		{
-			//scrollUp();
 			StartCoroutine(scrollRoutine(animTime, false));
 		}
 		else
@@ -268,7 +271,7 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 			StartCoroutine(smoothMove(transform, animTime, transform.position, startPos));
 		}
 		downButton.gameObject.GetComponent<CanvasGroup>().alpha = 0.2f;
-		upButton.gameObject.GetComponent<CanvasGroup>().alpha = 0.2f;
+		upButton.gameObject.GetComponent<CanvasGroup>().alpha = 0.2f; 
 	}
 
 	IEnumerator smoothMove(Transform t, float duration, Vector3 iPos, Vector3 fPos)
@@ -295,7 +298,6 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	IEnumerator fadeOutFadeIn(CanvasGroup group, float duration, float initial, float final)
 	{
-		Debug.Log("fading");
 		float time = 0.0f;
 		AnimationCurve curve = AnimationCurve.EaseInOut(time, initial, duration, final);
 		
