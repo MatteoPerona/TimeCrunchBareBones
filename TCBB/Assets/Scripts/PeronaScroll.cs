@@ -59,6 +59,8 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 			scrollDown();
 			pointersUp();
 		});
+
+		startPos = transform.position;
 	}
 
 	// Update is called once per frame
@@ -329,5 +331,14 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 		StartCoroutine(fadeOutFadeIn(group, scrollTime, 0, 1));
 		yield return StartCoroutine(smoothMove(transform, scrollTime, inverseFPos, startPos));
+	}
+
+	public void swappObjects(GameObject g1, GameObject g2)
+	{
+		int index1 = objects.IndexOf(g1);
+		int index2 = objects.IndexOf(g2);
+
+		objects[index1] = g2;
+		objects[index2] = g1;
 	}
 }
