@@ -148,7 +148,6 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	public IEnumerator scrollRoutine(bool up = true)
 	{
-		Debug.Log("starting scroll routine");
 		scrolling = true;
 		bool scrollable = true;
 
@@ -176,19 +175,15 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		}
 		if (up && scrollable)
 		{
-			Debug.Log("scrolling up");
 			scroll.moveObjects(gameObject, -1);
-			yield return StartCoroutine(scroll.scrollRoutine(0.1f, false));
-			Debug.Log("done scrolling up");
+			yield return StartCoroutine(scroll.scrollRoutine(0.2f, false, gameObject));
 			calculateAnchors();
 			updateState();
 		}
 		else if (scrollable)
 		{
-			Debug.Log("scrolling down");
 			scroll.moveObjects(gameObject, 1);
-			yield return StartCoroutine(scroll.scrollRoutine(0.1f));
-			Debug.Log("done scrolling down");
+			yield return StartCoroutine(scroll.scrollRoutine(0.2f, true, gameObject));
 			calculateAnchors();
 			updateState();
 		}

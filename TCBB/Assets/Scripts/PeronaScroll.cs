@@ -111,11 +111,12 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		}
 	}
 
-	public void scrollDown()
+	public void scrollDown(GameObject protectedObject = null)
 	{
 		foreach (GameObject g in objects)
 		{
-			g.SetActive(false);
+			if (g != protectedObject)
+				g.SetActive(false);
 		}
 		foreach (GameObject g in defaultObs)
 		{
@@ -124,11 +125,12 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		updateScroll(objects.GetRange(nextIndex, objects.Count-nextIndex));
 	}
 
-	public void scrollUp()
+	public void scrollUp(GameObject protectedObject = null)
 	{
 		foreach (GameObject g in objects)
 		{
-			g.SetActive(false);
+			if (g != protectedObject)
+				g.SetActive(false);
 		}
 		
 		int startOffset = 0;
@@ -313,7 +315,7 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		group.alpha = final;
 	}
 
-	public IEnumerator scrollRoutine(float duration, bool down = true)
+	public IEnumerator scrollRoutine(float duration, bool down = true, GameObject protectedObject = null)
 	{
 		float anchor = 1000;
 		if (!down)
@@ -326,12 +328,11 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		StartCoroutine(fadeOutFadeIn(group, scrollTime, 1, 0));
 		yield return StartCoroutine(smoothMove(transform, scrollTime, transform.position, fPos));
 
-		if (down) {scrollDown();}
-		else {scrollUp();}
+		if (down) {scrollDown(protectedObject);}
+		else {scrollUp(protectedObject);}
 
 		StartCoroutine(fadeOutFadeIn(group, scrollTime, 0, 1));
 		yield return StartCoroutine(smoothMove(transform, scrollTime, inverseFPos, startPos));
-		Debug.Log("finished scrolling");
 	}
 
 	public void swapObjects(GameObject g1, GameObject g2)
@@ -347,7 +348,6 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 	{
 		int index1 = objects.IndexOf(g1);
 		int index2 = index1 + swapAmount;
-		Debug.Log("index1: " + index1 + " index2: " + index2);
 		GameObject g2 = objects[index2];
 
 		objects[index1] = g2;
