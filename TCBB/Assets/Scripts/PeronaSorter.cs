@@ -24,6 +24,7 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	private bool dragging;
 	private bool ending;
+	private bool scrolling;
 
 	private bool upperIsDefault;
 	private bool lowerIsDefault;
@@ -47,7 +48,6 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	void Update()
 	{
-		
 	}
 
 
@@ -61,8 +61,24 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 	{
 		ogPos = transform.position;
 		originIndex = transform.GetSiblingIndex();
-		upperSibling = scrollContent.GetChild(originIndex - 1);
-		lowerSibling = scrollContent.GetChild(originIndex + 1);
+
+		for (int x = originIndex - 1; x >= 0; x--)
+		{
+			upperSibling = scrollContent.GetChild(x);
+			if (upperSibling.gameObject.activeSelf)
+			{
+				break;
+			}
+		}
+
+		for (int x = originIndex + 1; x <= scrollContent.childCount - 1; x++)
+		{
+			lowerSibling = scrollContent.GetChild(x);
+			if (lowerSibling.gameObject.activeSelf)
+			{
+				break;
+			}
+		}
 
 		upperIsDefault = false;
 		lowerIsDefault = false;
@@ -91,36 +107,39 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 	public IEnumerator OnDragRoutine(PointerEventData eventData)
 	{
 		dragging = true;
-
 		if (eventData.position.y > lowPos.y && eventData.position.y < highPos.y)
-		{ 
+		{
 			Vector3 deltaPos = new Vector3(ogPos.x, eventData.position.y, ogPos.z);
 			transform.position = deltaPos;
 
 			if (deltaPos.y > upperSibling.position.y && !upperIsDefault)
 			{
 				yield return StartCoroutine(smoothMove(0.01f, ogPos, upperSibling));
-				transform.SetSiblingIndex(originIndex - 1);
+				scroll.swapObjects(gameObject, upperSibling.gameObject);
+				transform.SetSiblingIndex(upperSibling.GetSiblingIndex());
 				LayoutRebuilder.ForceRebuildLayoutImmediate(scrollContent.GetComponent<RectTransform>());
 				updateState();
 			}
 			else if (deltaPos.y < lowerSibling.position.y && !lowerIsDefault)
 			{
 				yield return StartCoroutine(smoothMove(0.01f, ogPos, lowerSibling));
-				transform.SetSiblingIndex(originIndex + 1);
+				scroll.swapObjects(gameObject, lowerSibling.gameObject);
+				transform.SetSiblingIndex(lowerSibling.GetSiblingIndex());
 				LayoutRebuilder.ForceRebuildLayoutImmediate(scrollContent.GetComponent<RectTransform>());
 				updateState();
 			}
 
-			if (deltaPos.y >= highPos.y-100 && upPossible)
+			if (!scrolling)
 			{
-				StartCoroutine(scrollRoutine());
+				if (deltaPos.y >= highPos.y - 100 && upPossible)
+				{
+					StartCoroutine(scrollRoutine());
+				}
+				else if (deltaPos.y <= lowPos.y + 100 && downPossible)
+				{
+					StartCoroutine(scrollRoutine(false));
+				}
 			}
-			else if (deltaPos.y <= lowPos.y+100 && downPossible)
-			{
-				StartCoroutine(scrollRoutine(false));
-			}
-			
 		}
 
 		dragging = false;
@@ -129,6 +148,8 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	public IEnumerator scrollRoutine(bool up = true)
 	{
+		Debug.Log("starting scroll routine");
+		scrolling = true;
 		bool scrollable = true;
 
 		float time = 0.0f;
@@ -155,18 +176,25 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		}
 		if (up && scrollable)
 		{
-			scroll.swappObjects(gameObject, upperSibling.gameObject);
+			Debug.Log("scrolling up");
+			scroll.moveObjects(gameObject, -1);
 			yield return StartCoroutine(scroll.scrollRoutine(0.1f, false));
+			Debug.Log("done scrolling up");
 			calculateAnchors();
 			updateState();
 		}
 		else if (scrollable)
 		{
-			scroll.swappObjects(gameObject, lowerSibling.gameObject);
+			Debug.Log("scrolling down");
+			scroll.moveObjects(gameObject, 1);
 			yield return StartCoroutine(scroll.scrollRoutine(0.1f));
+			Debug.Log("done scrolling down");
 			calculateAnchors();
 			updateState();
 		}
+
+		StartCoroutine(EndDrag());
+		scrolling = false;
 	}
 
 
@@ -219,7 +247,7 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		}
 		else
 		{
-			for (int x = 0; x < scrollContent.childCount; x++)
+			for (int x = 0; x < scrollContent.childCount-1; x++)
 			{
 				Transform currentT = scrollContent.GetChild(x);
 				bool isDefaultOb = isDefault(currentT);
@@ -235,7 +263,7 @@ public class PeronaSorter : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 		//Find Low Pos
 		if (downPossible)
 		{
-			lowPos = scroll.upButton.transform.position;
+			lowPos = scroll.downButton.transform.position;
 		}
 		else
 		{

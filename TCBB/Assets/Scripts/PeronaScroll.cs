@@ -331,12 +331,24 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 		StartCoroutine(fadeOutFadeIn(group, scrollTime, 0, 1));
 		yield return StartCoroutine(smoothMove(transform, scrollTime, inverseFPos, startPos));
+		Debug.Log("finished scrolling");
 	}
 
-	public void swappObjects(GameObject g1, GameObject g2)
+	public void swapObjects(GameObject g1, GameObject g2)
 	{
 		int index1 = objects.IndexOf(g1);
 		int index2 = objects.IndexOf(g2);
+
+		objects[index1] = g2;
+		objects[index2] = g1;
+	}
+
+	public void moveObjects(GameObject g1, int swapAmount)
+	{
+		int index1 = objects.IndexOf(g1);
+		int index2 = index1 + swapAmount;
+		Debug.Log("index1: " + index1 + " index2: " + index2);
+		GameObject g2 = objects[index2];
 
 		objects[index1] = g2;
 		objects[index2] = g1;
