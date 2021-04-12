@@ -317,6 +317,12 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 	public IEnumerator scrollRoutine(float duration, bool down = true, GameObject protectedObject = null)
 	{
+		if (!startPosSet)
+		{
+			startPos = transform.position;
+			startPosSet = true;
+		}
+
 		float anchor = 1000;
 		if (!down)
 		{

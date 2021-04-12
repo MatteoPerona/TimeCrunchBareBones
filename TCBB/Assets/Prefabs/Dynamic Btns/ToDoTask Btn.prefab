@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5635434885705260024}
   - component: {fileID: -8855623981780578584}
   - component: {fileID: 6730906905831506250}
+  - component: {fileID: 2046706081154442932}
   m_Layer: 5
   m_Name: ToDoTask Btn
   m_TagString: Untagged
@@ -172,6 +173,20 @@ MonoBehaviour:
   holdTime: 1
   onProjectButton: 0
   onTaskButton: 0
+--- !u!114 &2046706081154442932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635434885705260031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33115f0c6f4463c478a0398727e2902a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitTime: 0.5
+  animTime: 0.05
 --- !u!1 &5635434886187091662
 GameObject:
   m_ObjectHideFlags: 0

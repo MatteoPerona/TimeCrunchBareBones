@@ -13,6 +13,9 @@ public class ToDoTaskLogic : MonoBehaviour
     public Button delete;
     private Button button;
     public GameObject crunchScreen;
+    private float animTime = 0.1f;
+    private Vector2 initialSizeDelta;
+    private float scalingFactor = 0.85f;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +28,8 @@ public class ToDoTaskLogic : MonoBehaviour
         button.onClick.AddListener(delegate{
             openCrunch();
         });
+
+        initialSizeDelta = GetComponent<RectTransform>().sizeDelta;
     }
 
     // Update is called once per frame
@@ -53,10 +58,20 @@ public class ToDoTaskLogic : MonoBehaviour
 
     public void startHoldOptionsProcess()
     {
+        gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
+        //touchHoldOpts.SetActive(true);
+        Vector2 newSizeDelta = new Vector2(initialSizeDelta.x * scalingFactor, initialSizeDelta.y);
+        StartCoroutine(Shrink(animTime, GetComponent<RectTransform>(), newSizeDelta));
     }
 
     public void endHoldOptionsProcess()
     {
+        button.onClick.AddListener(delegate {
+            openCrunch();
+        });
+
+        StartCoroutine(Shrink(animTime, GetComponent<RectTransform>(), initialSizeDelta));
+        //touchHoldOpts.SetActive(false);
     }
 
     IEnumerator fadeCanvasGroup(CanvasGroup group, float duration, float startAlpha, float endAlpha)
@@ -77,5 +92,20 @@ public class ToDoTaskLogic : MonoBehaviour
     public void destroyMe()
 	{
         Destroy(gameObject);
+	}
+
+    public IEnumerator Shrink(float duration, RectTransform r, Vector2 final)
+	{
+        Vector2 initial = r.sizeDelta;
+
+        float time = 0.0f;
+        while (time < duration)
+		{
+            r.sizeDelta = Vector2.Lerp(initial, final, time / duration);
+
+            yield return null;
+            time += Time.deltaTime;
+		}
+        r.sizeDelta = final;
 	}
 }

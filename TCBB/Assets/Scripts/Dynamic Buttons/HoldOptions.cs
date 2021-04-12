@@ -55,10 +55,10 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 			if (correctPress)
 			{
 				bool mainPressed = gameObject.GetComponent<Button>().GetComponent<ButtonAnimator>().pressed;
-				bool delPressed;
+				bool delPressed = false;
 				if (onProjectButton) { delPressed = gameObject.GetComponent<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed; }
 				else if (onTaskButton) { delPressed = gameObject.GetComponent<TaskButtonLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
-				else { delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
+				//else { delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
 
 				if (!mainPressed && !delPressed)
 				{
@@ -71,10 +71,10 @@ public class HoldOptions : MonoBehaviour, IPointerDownHandler
 				{
 					
 					bool mainPressed = gameObject.GetComponent<Button>().GetComponent<ButtonAnimator>().pressed;
-					bool delPressed;
+					bool delPressed = false;
 					if (onProjectButton) { delPressed = gameObject.GetComponent<ProjectButton>().delete.GetComponent<ButtonAnimator>().pressed; }
 					else if (onTaskButton) { delPressed = gameObject.GetComponent<TaskButtonLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
-					else { delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
+					//else { delPressed = gameObject.GetComponent<ToDoTaskLogic>().delete.GetComponent<ButtonAnimator>().pressed; }
 					if (mainPressed || delPressed)
 					{
 						correctPress = true;

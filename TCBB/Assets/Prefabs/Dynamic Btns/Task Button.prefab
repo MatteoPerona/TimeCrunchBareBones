@@ -285,6 +285,7 @@ GameObject:
   - component: {fileID: 4470934615578279363}
   - component: {fileID: -9154728467586455483}
   - component: {fileID: 4198677407846402036}
+  - component: {fileID: -9096012630296634659}
   m_Layer: 5
   m_Name: Task Button
   m_TagString: Untagged
@@ -446,6 +447,20 @@ MonoBehaviour:
   holdTime: 1
   onProjectButton: 0
   onTaskButton: 1
+--- !u!114 &-9096012630296634659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3227113583362108526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33115f0c6f4463c478a0398727e2902a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waitTime: 0.5
+  animTime: 0.05
 --- !u!1 &6791084320474593600
 GameObject:
   m_ObjectHideFlags: 0
