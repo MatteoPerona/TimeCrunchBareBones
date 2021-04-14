@@ -22,6 +22,7 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 	private Vector3 startPosDrag;
 	private float dy;
 	private bool startPosSet;
+	private bool hasCached = false;
 
 	// Start is called before the first frame update
 	void Start()
@@ -94,6 +95,14 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 			o.transform.SetSiblingIndex(index);
 			index++;
 		}
+
+		if (hasCached)
+			loadObjectsFromCache();
+		else if (objects.Count > 0)
+			Debug.Log(objects.Count);
+			cacheObjectsOrder();
+			hasCached = true;
+
 		resetScroll();
 	}
 
@@ -348,6 +357,8 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 		objects[index1] = g2;
 		objects[index2] = g1;
+
+		cacheObjectsOrder();
 	}
 
 	public void moveObjects(GameObject g1, int swapAmount)
@@ -358,5 +369,44 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
 		objects[index1] = g2;
 		objects[index2] = g1;
+
+		cacheObjectsOrder();
+	}
+
+	public void cacheObjectsOrder()
+	{
+		try
+		{
+			foreach (GameObject g in objects)
+				g.GetComponent<ProjectButton>().project.cacheIndex = objects.IndexOf(g);
+		}
+		catch (System.Exception e)
+		{
+			foreach (GameObject g in objects)
+				g.GetComponent<TaskButtonLogic>().task.cacheIndexTask = objects.IndexOf(g);
+		}
+		catch 
+		{
+			foreach (GameObject g in objects)
+				g.GetComponent<ToDoTaskLogic>().task.cacheIndexToDo = objects.IndexOf(g);
+		}
+	}
+
+	public void loadObjectsFromCache()
+	{
+		List<GameObject> temp = objects;
+		foreach (GameObject g in temp)
+			try
+			{
+				objects[g.GetComponent<ProjectButton>().project.cacheIndex] = g;
+			}
+			catch (System.Exception e)
+			{
+				objects[g.GetComponent<TaskButtonLogic>().task.cacheIndexTask] = g;
+			}
+			catch
+			{
+				objects[g.GetComponent<ToDoTaskLogic>().task.cacheIndexToDo] = g;
+			}
 	}
 }

@@ -9,4 +9,6 @@ public class Task
     public string description;
     public float timeEstimate = 0.021f;
     public System.DateTime dateToDo;
+    public int cacheIndexTask;
+    public int cacheIndexToDo;
 }

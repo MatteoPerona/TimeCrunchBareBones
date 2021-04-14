@@ -14,7 +14,7 @@ public class TaskButtonLogic : MonoBehaviour
 	public GameObject regularLayout;
 	public Button delete;
 	public bool isComplete;
-	private Task task;
+	public Task task;
 	private Project project;
 	private Transform parentTransform;
 

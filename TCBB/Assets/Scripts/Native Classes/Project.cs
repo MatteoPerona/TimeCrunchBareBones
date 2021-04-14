@@ -8,6 +8,7 @@ public class Project
     public string description;
     public List<Task> completedTasks = new List<Task>();
     public List<Task> incompleteTasks = new List<Task>();
+    public int cacheIndex;
 
     public float progress()
     {
