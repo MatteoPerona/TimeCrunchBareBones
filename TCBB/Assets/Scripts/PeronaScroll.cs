@@ -100,6 +100,9 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 			loadObjectsFromCache();
 		else if (objects.Count > 0)
 			Debug.Log(objects.Count);
+			foreach (GameObject g in objects)
+				if (g == defaultObs[0])
+					Debug.Log("bad");
 			cacheObjectsOrder();
 			hasCached = true;
 
@@ -380,16 +383,24 @@ public class PeronaScroll : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 			foreach (GameObject g in objects)
 				g.GetComponent<ProjectButton>().project.cacheIndex = objects.IndexOf(g);
 		}
-		catch (System.Exception e)
+		catch
 		{
-			foreach (GameObject g in objects)
-				g.GetComponent<TaskButtonLogic>().task.cacheIndexTask = objects.IndexOf(g);
+			try
+			{
+				foreach (GameObject g in objects)
+					g.GetComponent<TaskButtonLogic>().task.cacheIndexTask = objects.IndexOf(g);
+			}
+			catch
+			{
+				foreach (GameObject g in objects)
+					g.GetComponent<ToDoTaskLogic>().task.cacheIndexToDo = objects.IndexOf(g);
+			}
 		}
-		catch 
+		/*catch 
 		{
 			foreach (GameObject g in objects)
 				g.GetComponent<ToDoTaskLogic>().task.cacheIndexToDo = objects.IndexOf(g);
-		}
+		}*/
 	}
 
 	public void loadObjectsFromCache()
